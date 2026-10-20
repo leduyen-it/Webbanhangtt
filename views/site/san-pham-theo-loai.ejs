@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <link href="img/favicon.ico" rel="icon" />
+
+    <title>Helmet Store</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/favicon.ico" />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="../lib/slick/slick.css" rel="stylesheet" />
+    <link href="../lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/premium.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i> huyyntran@.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i> +01234567890
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="/" class="nav-item nav-link active">Trang Chủ</a>
+              <a href="/san-pham" class="nav-item nav-link">Sản Phẩm</a>
+              <!-- <a href="product-detail.html" class="nav-item nav-link">Product Detail</a> -->
+              <a href="/cart" class="nav-item nav-link">Giỏ Hàng</a>
+              <a href="/thanh-toan" class="nav-item nav-link">Thanh Toán</a>
+              <a href="/users/tai-khoan" class="nav-item nav-link"
+                >Tài khoản của bạn</a
+              >
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Trang khác</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/wishlist" class="dropdown-item"
+                    >Sản phẩm đã thích</a
+                  >
+                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
+                </div>
+              </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <% if (user) { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  ><i class="fa fa-user"></i> <%= user.username %></a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/tai-khoan" class="dropdown-item"
+                    >Tài khoản của tôi</a
+                  >
+                  <a href="/orders" class="dropdown-item">Đơn hàng</a>
+                  <a href="/users/dang-xuat" class="dropdown-item">Đăng xuất</a>
+                </div>
+              </div>
+              <% } else { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Tài khoản</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                  <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="/">
+                <img src="../img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <form id="headerSearchForm" action="" method="get" style="display: flex; width: 100%;">
+                <input id="headerSearch" name="search" type="text" placeholder="Search" style="flex: 1;" />
+                <button type="submit" id="headerSearchBtn"><i class="fa fa-search"></i></button>
+              </form>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(<%= wishlistCount || 0 %>)</span>
+              </a>
+              <a href="/cart" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(<%= cartCount || 0 %>)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/san-pham">Sản phẩm</a></li>
+          <li class="breadcrumb-item active"><%=breadcrumb%></li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Product List Start -->
+    <div class="product-view">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="product-view-top">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="product-search">
+                        <input
+                          id="myInput"
+                          type="text"
+                          placeholder="Tìm kiếm tên sản phẩm"
+                        />
+                        <button><i class="fa fa-search"></i></button>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="product-short">
+                        <div class="dropdown">
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            Sắp xếp theo
+                          </div>
+                          <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item">Mới nhất</a>
+                            <a href="#" class="dropdown-item">Phổ biến</a>
+                            <a href="#" class="dropdown-item">Bán chạy nhất</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="product-price-range">
+                        <div class="dropdown">
+                          <div class="dropdown-toggle" data-toggle="dropdown">
+                            Sắp xếp theo giá
+                          </div>
+                          <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item"
+                              >0 ₫ - 500.000 ₫</a
+                            >
+                            <a href="#" class="dropdown-item"
+                              >500.000 ₫ - 1.000.000 ₫</a
+                            >
+                            <a href="#" class="dropdown-item"
+                              >1.000.000 ₫ - 2.000.000 ₫</a
+                            >
+                            <a href="#" class="dropdown-item"
+                              >2.000.000 ₫ - 5.000.000 ₫</a
+                            >
+                            <a href="#" class="dropdown-item"
+                              >Trên 5.000.000 ₫</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- danh sách sản phẩm theo loại đc nhúng tại đây -->
+              <div class="col-md-12">
+                <div id="myTable" class="row"></div>
+              </div>
+              
+              <!-- Thông báo không tìm thấy sản phẩm -->
+              <div class="col-md-12">
+                <div id="noResultMessage" class="text-center" style="display: none; padding: 40px 0;">
+                  <i class="fa fa-search" style="font-size: 48px; color: #ccc; margin-bottom: 20px; display: block;"></i>
+                  <h3 style="color: #666; margin: 20px 0;">Không tìm thấy sản phẩm phù hợp</h3>
+                  <p style="color: #999; margin: 10px 0;">Vui lòng thử lại với từ khóa khác</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination Start -->
+            <div class="col-md-12">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                  </li>
+                  <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <!-- Pagination Start -->
+          </div>
+
+          <!-- Side Bar Start -->
+          <div class="col-lg-4 sidebar">
+            <div class="sidebar-widget category">
+              <h2 class="title">Danh mục</h2>
+              <nav class="navbar bg-light">
+                <ul class="navbar-nav">
+                  <% for (cat of listCat) { %>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/danh-muc/<%=cat.nameCat%>"
+                      ><i class="fa fa-motorcycle"></i>Nón Fullface <%=
+                      cat.nameCat %></a
+                    >
+                  </li>
+                  <% } %>
+                </ul>
+              </nav>
+            </div>
+
+            <div class="sidebar-widget widget-slider">
+              <h3 style="text-align: center; color: #ff6f61">Nón Nổi Bật</h3>
+              <div class="sidebar-slider normal-slider">
+                <% for (product of listProPopular) { %>
+                <div class="product-item">
+                  <div class="product-title">
+                    <a href="#"> <%=product.nameProduct%> </a>
+                    <div class="ratting">
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                    </div>
+                  </div>
+                  <div class="product-image">
+                    <a href="product-detail.html">
+                      <img
+                        src="../<%=product.imgProduct%>"
+                        alt="Product Image"
+                      />
+                    </a>
+                    <div
+                      class="product-action"
+                      data-product-id="<%=product.idProduct%>"
+                    >
+                      <a
+                        href="#"
+                        class="add-to-cart"
+                        data-product-id="<%=product.idProduct%>"
+                        ><i class="fa fa-cart-plus"></i
+                      ></a>
+                      <a
+                        href="#"
+                        class="add-to-wishlist"
+                        data-product-id="<%=product.idProduct%>"
+                        title="Yêu thích"
+                        ><i class="<% if (userWishlistIds.includes(product.idProduct)) { %>fas<% } else { %>far<% } %> fa-heart"></i
+                      ></a>
+                      <a
+                        class="slug"
+                        href="/san-pham/<%= slug(product.nameProduct) %>"
+                        ><i class="fa fa-search"></i
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="product-price">
+                    <h3>
+                      <%=product.priceProduct.toLocaleString('vi-VN')%>
+                      <span>₫</span>
+                    </h3>
+                    <a
+                      class="btn add-to-cart"
+                      href="#"
+                      data-product-id="<%=product.idProduct%>"
+                      ><i class="fa fa-shopping-cart"></i>Mua Ngay</a
+                    >
+                  </div>
+                </div>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="sidebar-widget brands">
+              <h2 class="title">Our Brands</h2>
+              <ul>
+                <li><a href="#">Nulla </a><span>(45)</span></li>
+                <li><a href="#">Curabitur </a><span>(34)</span></li>
+                <li><a href="#">Nunc </a><span>(67)</span></li>
+                <li><a href="#">Ullamcorper</a><span>(74)</span></li>
+                <li><a href="#">Fusce </a><span>(89)</span></li>
+                <li><a href="#">Sagittis</a><span>(28)</span></li>
+              </ul>
+            </div>
+
+            <div class="sidebar-widget tag">
+              <h2 class="title">Tags Cloud</h2>
+              <a href="#">Lorem ipsum</a>
+              <a href="#">Vivamus</a>
+              <a href="#">Phasellus</a>
+              <a href="#">pulvinar</a>
+              <a href="#">Curabitur</a>
+              <a href="#">Fusce</a>
+              <a href="#">Sem quis</a>
+              <a href="#">Mollis metus</a>
+              <a href="#">Sit amet</a>
+              <a href="#">Vel posuere</a>
+              <a href="#">orci luctus</a>
+              <a href="#">Nam lorem</a>
+            </div>
+          </div>
+          <!-- Side Bar End -->
+        </div>
+      </div>
+    </div>
+    <!-- Product List End -->
+
+    <!-- Brand Start -->
+    <div class="brand">
+      <div class="container-fluid">
+        <div class="brand-slider">
+          <div class="brand-item">
+            <a href="/danh-muc/agv"><img src="../img/brand-1.png" alt="" /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/shoei"
+              ><img src="../img/brand-2.png" alt=""
+            /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/arai"><img src="../img/brand-3.png" alt="" /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/torc"><img src="../img/brand-4.png" alt="" /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/yohe"><img src="../img/brand-5.png" alt="" /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/kyt"><img src="../img/brand-6.png" alt="" /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/royal"
+              ><img src="../img/brand-7.png" alt=""
+            /></a>
+          </div>
+          <div class="brand-item">
+            <a href="/danh-muc/ls2"><img src="../img/brand-8.png" alt="" /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Brand End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Liên Hệ</h2>
+              <div class="contact-info">
+                <p><i class="fa fa-map-marker"></i>Hà Nội, Việt Nam</p>
+                <p><i class="fa fa-envelope"></i>tranhuy@gmail.com</p>
+                <p><i class="fa fa-phone"></i>+01234567890</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Theo Dõi Tôi</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href="https://www.facebook.com/ybx1802"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                  <a href="https://www.linkedin.com/in/huy-tran-57777b202/"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Cửa Hàng</h2>
+              <ul>
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Chính sách bảo mật</a></li>
+                <li><a href="#">Hình thức vận chuyển</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Mua Hàng</h2>
+              <ul>
+                <li><a href="#">Chính sách thanh toán</a></li>
+                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="#">Chính sách hoàn trả</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>Nhận thanh toán bằng:</h2>
+              <img src="../img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Chứng chỉ bảo mật:</h2>
+              <img src="../img/godaddy.svg" alt="Payment Security" />
+              <img src="../img/norton.svg" alt="Payment Security" />
+              <img src="../img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy;
+              <a href="https://www.facebook.com/tran.huy.928441">Helmet Store</a
+              >. All Rights Reserved
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="../lib/easing/easing.min.js"></script>
+    <script src="../lib/slick/slick.min.js"></script>
+
+    <!-- Hidden product data for JavaScript -->
+    <script type="application/json" id="productData">
+    <%- JSON.stringify(listPro) %>
+    </script>
+
+    <!-- Hidden wishlist data for JavaScript -->
+    <script type="application/json" id="wishlistData">
+    <%- JSON.stringify(userWishlistIds || []) %>
+    </script>
+
+    <!-- Template Javascript -->
+    <script src="../js/main.js"></script>
+  </body>
+</html>
+
+<script>
+  // Read product data from JSON script tag
+  const productDataElement = document.getElementById('productData');
+  const listPro = productDataElement ? JSON.parse(productDataElement.textContent) : [];
+
+  // Read wishlist data from JSON script tag
+  const wishlistDataElement = document.getElementById('wishlistData');
+  const userWishlistIds = wishlistDataElement ? JSON.parse(wishlistDataElement.textContent) : [];
+
+  const xuLyDuLieu = (data, id) => {
+    const sp_theo_loai = document.getElementById("myTable");
+    console.log("=== xuLyDuLieu called ===");
+    console.log("Total products to render:", data.length);
+    let str = ``;
+    for (i in data) {
+      let product = data[i];
+      let newName = replaceNameProduct(product.nameProduct).toLowerCase();
+
+      str += `<div class="col-md-4">
+                <div class="product-item">
+                    <div class="product-title">
+                        <a class="slug" href="/san-pham/${newName}">${
+        product.nameProduct
+      }</a>
+                        <div class="ratting">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="product-image">
+                        <a href="/san-pham/${replaceNameProduct(
+                          product.nameProduct
+                        )}">
+                            <img src="../${
+                              product.imgProduct
+                            }" alt="Product Image" width="100%">
+                        </a>
+              <div class="product-action" data-product-id="${
+                product.idProduct
+              }">
+                  <a href="#" class="add-to-cart" data-product-id="${
+                    product.idProduct
+                  }"><i class="fa fa-cart-plus"></i></a>
+                  <a href="#" class="add-to-wishlist" data-product-id="${
+                    product.idProduct
+                  }"><i class="${
+                    window.userWishlistIds && window.userWishlistIds.includes(product.idProduct) ? 'fas' : 'far'
+                  } fa-heart"></i></a>
+                  <a href="/san-pham/${replaceNameProduct(
+                    product.nameProduct
+                  ).toLowerCase()}"><i class="fa fa-search"></i></a>
+                </div>
+                    </div>
+                    <div class="product-price">
+                        <h3>${product.priceProduct.toLocaleString(
+                          "vi-VN"
+                        )}<span> ₫</span></h3>
+                        <a class="btn add-to-cart" href="#" data-product-id="${
+                          product.idProduct
+                        }"><i class="fa fa-shopping-cart"></i>Mua Ngay</a>
+                    </div>
+                </div>
+            </div>`;
+    }
+    sp_theo_loai.innerHTML += str;
+
+    console.log("Products rendered successfully");
+    console.log("Total .col-md-4 elements:", $("#myTable .col-md-4").length);
+
+    // Reinitialize search/filter after data is loaded
+    setTimeout(function () {
+      console.log("Initializing product filters...");
+      initializeProductFilters();
+    }, 100);
+  };
+
+  function initializeProductFilters() {
+    // Function để kiểm tra và hiển thị thông báo
+    function checkAndShowNoResultMessage() {
+      var visibleProducts = $("#myTable .col-md-4:visible").length;
+      console.log("Visible products:", visibleProducts);
+      
+      if (visibleProducts === 0) {
+        console.log("Showing no result message");
+        $("#noResultMessage").show();
+      } else {
+        console.log("Hiding no result message");
+        $("#noResultMessage").hide();
+      }
+    }
+
+    // Tìm kiếm sản phẩm trong trang danh mục (myInput)
+    $("#myInput")
+      .off("keyup")
+      .on("keyup", function () {
+        var value = $(this).val().toLowerCase().trim();
+        console.log("Searching for:", value);
+        
+        $("#myTable .col-md-4").filter(function () {
+          var productText = $(this).text().toLowerCase();
+          var isMatch = value === '' || productText.indexOf(value) > -1;
+          $(this).toggle(isMatch);
+        });
+        
+        checkAndShowNoResultMessage();
+      });
+
+    // Tìm kiếm sản phẩm từ header search
+    $("#headerSearch")
+      .off("keyup")
+      .on("keyup", function () {
+        var value = $(this).val().toLowerCase().trim();
+        console.log("Header search:", value);
+        
+        $("#myTable .col-md-4").filter(function () {
+          var productText = $(this).text().toLowerCase();
+          var isMatch = value === '' || productText.indexOf(value) > -1;
+          $(this).toggle(isMatch);
+        });
+        
+        checkAndShowNoResultMessage();
+      });
+
+    // Xử lý click nút search trên header
+    $("#headerSearchBtn")
+      .off("click")
+      .on("click", function (e) {
+        e.preventDefault();
+        var value = $("#headerSearch").val().toLowerCase().trim();
+        console.log("Header button clicked, searching:", value);
+        
+        if (value === '') {
+          // Nếu rỗng, hiển thị tất cả sản phẩm
+          $("#myTable .col-md-4").show();
+          $("#noResultMessage").hide();
+          return;
+        }
+        
+        $("#myTable .col-md-4").filter(function () {
+          var productText = $(this).text().toLowerCase();
+          var isMatch = productText.indexOf(value) > -1;
+          $(this).toggle(isMatch);
+        });
+        
+        checkAndShowNoResultMessage();
+      });
+
+    console.log(
+      "Product filters initialized for",
+      $("#myTable .col-md-4").length,
+      "products"
+    );
+  }
+
+  // Load products immediately when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('listPro:', listPro);
+    console.log('userWishlistIds:', userWishlistIds);
+    
+    // Make userWishlistIds available globally for the template
+    window.userWishlistIds = userWishlistIds;
+    
+    xuLyDuLieu(listPro);
+    
+    // Kiểm tra URL có query parameter 'search' không
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search');
+    
+    if (searchQuery) {
+      console.log('Search query from URL:', searchQuery);
+      // Đợi sản phẩm load xong rồi mới search
+      setTimeout(function() {
+        console.log("=== Processing URL Search ===");
+        $('#headerSearch').val(searchQuery);
+        $('#myInput').val(searchQuery);
+        
+        // Thực hiện tìm kiếm
+        var value = searchQuery.toLowerCase().trim();
+        console.log('Search term:', value);
+        console.log('Total products before filter:', $("#myTable .col-md-4").length);
+        
+        var matchCount = 0;
+        $("#myTable .col-md-4").filter(function () {
+          var productText = $(this).text().toLowerCase();
+          var isMatch = productText.indexOf(value) > -1;
+          $(this).toggle(isMatch);
+          if (isMatch) matchCount++;
+        });
+        
+        console.log('Matching products:', matchCount);
+        
+        // Kiểm tra kết quả
+        setTimeout(function() {
+          var visibleProducts = $("#myTable .col-md-4:visible").length;
+          console.log('Final visible products:', visibleProducts);
+          
+          if (visibleProducts === 0) {
+            console.log('✓ No products found - SHOWING MESSAGE');
+            $("#noResultMessage").css("display", "block").show();
+            console.log('Message display style:', $("#noResultMessage").css("display"));
+            console.log('Message is visible:', $("#noResultMessage").is(":visible"));
+          } else {
+            console.log('✓ Products found - hiding message');
+            $("#noResultMessage").hide();
+          }
+        }, 100);
+      }, 300);
+    }
+  });
+
+  // Keep the old fetch logic as fallback
+  var paramsString = window.location.href;
+  var index = paramsString.lastIndexOf("/") + 1;
+  console.log(index);
+  var ten_danh_muc = paramsString.slice(index);
+  console.log(ten_danh_muc);
+
+  // Fallback: fetch from API if no data from server
+  /*
+  window
+    .fetch(`http://localhost:3000/danh-muc/api/${ten_danh_muc}`)
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+      xuLyDuLieu(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  */
+
+  function xoa_dau(str) {
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/đ/g, "d");
+    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "a");
+    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "e");
+    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "i");
+    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "o");
+    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "u");
+    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "y");
+    str = str.replace(/Đ/g, "d");
+    str = str.split(" ").join("-");
+    return str;
+  }
+
+  function replaceNameProduct(nameProduct) {
+    var newNameProduct = xoa_dau(nameProduct);
+    return newNameProduct;
+  }
+
+  // Search Product - sửa lại để hoạt động với dynamic content
+  var searchFunction;
+  var sortFunction;
+  var filterFunction;
+
+  $(document).ready(function () {
+    console.log("=== Document Ready ===");
+    console.log("Initial products in #myTable:", $("#myTable .col-md-4").length);
+    console.log("noResultMessage element exists:", $("#noResultMessage").length > 0);
+    
+    // Function để kiểm tra và hiển thị thông báo không tìm thấy
+    function checkNoResults() {
+      var totalProducts = $("#myTable .col-md-4").length;
+      var visibleProducts = $("#myTable .col-md-4:visible").length;
+      console.log("=== Check No Results ===");
+      console.log("Total products:", totalProducts);
+      console.log("Visible products:", visibleProducts);
+      
+      if (totalProducts === 0) {
+        console.log("WARNING: No products loaded yet!");
+        return;
+      }
+      
+      if (visibleProducts === 0) {
+        console.log("✓ Showing no result message");
+        $("#noResultMessage").css("display", "block").show();
+      } else {
+        console.log("✓ Hiding no result message");
+        $("#noResultMessage").hide();
+      }
+    }
+
+    // Search functionality cho ô tìm kiếm trong trang
+    $("#myInput").on("keyup", function () {
+      var value = $(this).val().toLowerCase().trim();
+      console.log("=== myInput Search ===");
+      console.log("Search value:", value);
+      
+      $("#myTable .col-md-4").filter(function () {
+        var isMatch = value === '' || $(this).text().toLowerCase().indexOf(value) > -1;
+        $(this).toggle(isMatch);
+      });
+      
+      setTimeout(checkNoResults, 50);
+    });
+
+    // Search functionality cho ô tìm kiếm trên header
+    $("#headerSearch").on("keyup", function () {
+      var value = $(this).val().toLowerCase().trim();
+      console.log("=== headerSearch Search ===");
+      console.log("Search value:", value);
+      
+      $("#myTable .col-md-4").filter(function () {
+        var isMatch = value === '' || $(this).text().toLowerCase().indexOf(value) > -1;
+        $(this).toggle(isMatch);
+      });
+      
+      setTimeout(checkNoResults, 50);
+    });
+
+    // Xử lý submit form search trên header
+    $("#headerSearchForm").on("submit", function (e) {
+      e.preventDefault();
+      var value = $("#headerSearch").val().toLowerCase().trim();
+      console.log("=== headerSearchForm Submit ===");
+      console.log("Search value:", value);
+      
+      if (value === '') {
+        $("#myTable .col-md-4").show();
+        $("#noResultMessage").hide();
+        // Xóa query parameter khỏi URL
+        window.history.pushState({}, '', window.location.pathname);
+        return;
+      }
+      
+      // Cập nhật URL với query parameter
+      const newUrl = window.location.pathname + '?search=' + encodeURIComponent(value);
+      window.history.pushState({}, '', newUrl);
+      
+      $("#myTable .col-md-4").filter(function () {
+        var isMatch = $(this).text().toLowerCase().indexOf(value) > -1;
+        $(this).toggle(isMatch);
+      });
+      
+      setTimeout(checkNoResults, 50);
+    });
+
+    // Xử lý click nút search trên header (fallback)
+    $("#headerSearchBtn").on("click", function (e) {
+      e.preventDefault();
+      $("#headerSearchForm").submit();
+    });
+
+    // Sort functionality
+    $(".product-short .dropdown-item").on("click", function (e) {
+      e.preventDefault();
+      var sortType = $(this).text();
+      sortProducts(sortType);
+      $(".product-short .dropdown-toggle").text(sortType);
+    });
+
+    // Price filter functionality
+    $(".product-price-range .dropdown-item").on("click", function (e) {
+      e.preventDefault();
+      var priceRange = $(this).text();
+      filterByPrice(priceRange);
+      $(".product-price-range .dropdown-toggle").text(priceRange);
+    });
+  });
+
+  function sortProducts(sortType) {
+    var container = $("#myTable");
+    var products = container.children(".col-md-4").get();
+
+    products.sort(function (a, b) {
+      if (sortType === "Mới nhất") {
+        return 0; // Giữ thứ tự hiện tại
+      } else if (sortType === "Phổ biến" || sortType === "Bán chạy nhất") {
+        return Math.random() - 0.5; // Random sort
+      }
+      return 0;
+    });
+
+    $.each(products, function (index, item) {
+      container.append(item);
+    });
+  }
+
+  function filterByPrice(priceRange) {
+    var minPrice = 0;
+    var maxPrice = Infinity;
+
+    if (priceRange === "0 ₫ - 500.000 ₫") {
+      minPrice = 0;
+      maxPrice = 500000;
+    } else if (priceRange === "500.000 ₫ - 1.000.000 ₫") {
+      minPrice = 500000;
+      maxPrice = 1000000;
+    } else if (priceRange === "1.000.000 ₫ - 2.000.000 ₫") {
+      minPrice = 1000000;
+      maxPrice = 2000000;
+    } else if (priceRange === "2.000.000 ₫ - 5.000.000 ₫") {
+      minPrice = 2000000;
+      maxPrice = 5000000;
+    } else if (priceRange === "Trên 5.000.000 ₫") {
+      minPrice = 5000000;
+      maxPrice = Infinity;
+    } else {
+      // "Sắp xếp theo giá" - hiện tất cả
+      $("#myTable .col-md-4").show();
+      return;
+    }
+
+    $("#myTable .col-md-4").each(function () {
+      var priceText = $(this).find(".product-price h3").text();
+      var price = parseInt(priceText.replace(/[^\d]/g, ""));
+
+      if (price >= minPrice && price <= maxPrice) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  }
+</script>

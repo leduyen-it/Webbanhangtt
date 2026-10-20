@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="utf-8">
+        <title>Liên Hệ - Helmet Store</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="Cửa hàng nón bảo hiểm chất lượng cao" name="keywords">
+        <meta content="Liên hệ với Helmet Store để được tư vấn và hỗ trợ" name="description">
+
+        <!-- Favicon -->
+        <link href="img/favicon.ico" rel="icon">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap" rel="stylesheet">
+
+        <!-- CSS Libraries -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+        <link href="lib/slick/slick.css" rel="stylesheet">
+        <link href="lib/slick/slick-theme.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+        <link href="css/premium.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- Top bar Start -->
+        <div class="top-bar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <i class="fa fa-envelope"></i>
+                        tranhuy@helmetstore.com
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="fa fa-phone-alt"></i>
+                        +84-123-456-789
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Top bar End -->
+        
+        <!-- Nav Bar Start -->
+        <div class="nav">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                    <a href="#" class="navbar-brand">MENU</a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto">
+                            <a href="/" class="nav-item nav-link">Trang Chủ</a>
+                            <a href="/san-pham" class="nav-item nav-link">Sản phẩm</a>
+                            <a href="/cart" class="nav-item nav-link">Giỏ hàng</a>
+                            <a href="/thanh-toan" class="nav-item nav-link">Thanh toán</a>
+                            <a href="/users/tai-khoan" class="nav-item nav-link">Tài khoản của bạn</a>
+                            <div class="nav-item dropdown">
+                                <a
+                                href="#"
+                                class="nav-link dropdown-toggle active"
+                                data-toggle="dropdown">Liên hệ</a>
+                                <div class="dropdown-menu">
+                                <a href="/wishlist" class="dropdown-item">Sản phẩm đã thích</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navbar-nav ml-auto">
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tài khoản</a>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item">Đăng nhập</a>
+                                    <a href="#" class="dropdown-item">Đăng ký</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Nav Bar End -->      
+        
+        <!-- Bottom Bar Start -->
+        <div class="bottom-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <div class="logo">
+                            <a href="index.html">
+                                <img src="img/logo.png" alt="Logo">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="search">
+                            <input type="text" placeholder="Search">
+                            <button><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="user">
+                            <a href="/wishlist" class="btn wishlist">
+                                <i class="fa fa-heart"></i>
+                                <span>(<%= wishlistCount || 0 %>)</span>
+                            </a>
+                            <a href="/cart" class="btn cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>(<%= cartCount || 0 %>)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom Bar End -->
+        
+        <!-- Breadcrumb Start -->
+        <div class="breadcrumb-wrap">
+            <div class="container-fluid">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="/san-pham">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Liên hệ</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Breadcrumb End -->
+        
+        <!-- Contact Start -->
+        <div class="contact">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="contact-info">
+                            <h2>Văn Phòng</h2>
+                            <h3><i class="fa fa-map-marker"></i>123 Phố Huế, Hai Bà Trưng, Hà Nội</h3>
+                            <h3><i class="fa fa-envelope"></i>lienhe@helmetstore.com</h3>
+                            <h3><i class="fa fa-phone"></i>+84-123-456-789</h3>
+                            <div class="social">
+                                <a href=""><i class="fab fa-twitter"></i></a>
+                                <a href=""><i class="fab fa-facebook-f"></i></a>
+                                <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                <a href=""><i class="fab fa-instagram"></i></a>
+                                <a href=""><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="contact-info">
+                            <h2>Cửa Hàng</h2>
+                            <h3><i class="fa fa-map-marker"></i>456 Trần Duy Hưng, Cầu Giấy, Hà Nội</h3>
+                            <h3><i class="fa fa-envelope"></i>cuahang@helmetstore.com</h3>
+                            <h3><i class="fa fa-phone"></i>+84-987-654-321</h3>
+                            <div class="social">
+                                <a href=""><i class="fab fa-twitter"></i></a>
+                                <a href=""><i class="fab fa-facebook-f"></i></a>
+                                <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                <a href=""><i class="fab fa-instagram"></i></a>
+                                <a href=""><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="contact-form">
+                            <h4 class="mb-4">Gửi tin nhắn cho chúng tôi</h4>
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" placeholder="Họ và tên" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="email" class="form-control" placeholder="Email của bạn" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Chủ đề" />
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="5" placeholder="Nội dung tin nhắn"></textarea>
+                                </div>
+                                <div><button class="btn" type="submit">Gửi tin nhắn</button></div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="contact-map">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.643783836357!2d105.78291137584164!3d21.04693448715293!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abb158a2305d%3A0x5c357d21c785ea3d!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyDEkGnhu4duIEzhu7Fj!5e0!3m2!1svi!2s!4v1764492214644!5m2!1svi!2s" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Contact End -->
+        
+        <!-- Footer Start -->
+        <div class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Liên Hệ</h2>
+                            <div class="contact-info">
+                                <p><i class="fa fa-map-marker"></i>123 Phố Huế, Hai Bà Trưng, Hà Nội</p>
+                                <p><i class="fa fa-envelope"></i>lienhe@helmetstore.com</p>
+                                <p><i class="fa fa-phone"></i>+84-123-456-789</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Theo Dõi Chúng Tôi</h2>
+                            <div class="contact-info">
+                                <div class="social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Thông Tin Công Ty</h2>
+                            <ul>
+                                <li><a href="#">Giới thiệu</a></li>
+                                <li><a href="#">Chính sách bảo mật</a></li>
+                                <li><a href="#">Điều khoản sử dụng</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Thông Tin Mua Hàng</h2>
+                            <ul>
+                                <li><a href="#">Chính sách thanh toán</a></li>
+                                <li><a href="#">Chính sách vận chuyển</a></li>
+                                <li><a href="#">Chính sách hoàn trả</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row payment align-items-center">
+                    <div class="col-md-6">
+                        <div class="payment-method">
+                            <h2>Nhận thanh toán bằng:</h2>
+                            <img src="img/payment-method.png" alt="Payment Method" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="payment-security">
+                            <h2>Chứng chỉ bảo mật:</h2>
+                            <img src="img/godaddy.svg" alt="Payment Security" />
+                            <img src="img/norton.svg" alt="Payment Security" />
+                            <img src="img/ssl.svg" alt="Payment Security" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+        
+        <!-- Footer Bottom Start -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 copyright">
+                        <p>Copyright &copy; <a href="https://www.facebook.com/tran.huy.928441">Helmet Store</a>. All Rights Reserved</p>
+                    </div>
+
+                    <div class="col-md-6 template-by">
+						<!--/*** The author’s attribution link must remain intact in the template. ***/-->
+                        <!--/*** If you wish to remove this credit link, please purchase the Pro Version . ***/-->
+                        <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Bottom End -->       
+        
+        <!-- Back to Top -->
+        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+        
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+        <script src="lib/easing/easing.min.js"></script>
+        <script src="lib/slick/slick.min.js"></script>
+        
+        <!-- Template Javascript -->
+        <script src="js/main.js"></script>
+    </body>
+</html>

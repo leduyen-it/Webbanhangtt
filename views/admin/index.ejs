@@ -1,0 +1,336 @@
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Dashboard</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="info-box">
+            <span class="info-box-icon bg-success elevation-1">
+              <i class="fas fa-money-bill-wave"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Tổng doanh thu</span>
+              <span class="info-box-number">
+                <%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(stats.totalRevenue) %>
+              </span>
+              <small>Đơn VNPay đã thanh toán và COD đã giao</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1">
+              <i class="fas fa-shopping-cart"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Tổng đơn hàng</span>
+              <span class="info-box-number"><%= stats.totalOrders.toLocaleString('vi-VN') %></span>
+              <small>Không tính đơn đã hủy</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="info-box">
+            <span class="info-box-icon bg-warning elevation-1">
+              <i class="fas fa-box"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Tổng sản phẩm</span>
+              <span class="info-box-number"><%= stats.totalProducts.toLocaleString('vi-VN') %></span>
+              <small>Sản phẩm trong danh mục</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="info-box">
+            <span class="info-box-icon bg-danger elevation-1">
+              <i class="fas fa-users"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Tổng khách hàng</span>
+              <span class="info-box-number"><%= stats.totalUsers.toLocaleString('vi-VN') %></span>
+              <small>Tài khoản khách hàng</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" id="revenue-report">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-chart-line mr-1"></i> Doanh thu
+              </h3>
+              <div class="card-tools d-flex align-items-center">
+                <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Lọc khoảng thời gian">
+                  <button type="button" class="btn btn-outline-secondary revenue-range" data-range="7d">7 ngày</button>
+                  <button type="button" class="btn btn-primary revenue-range" data-range="30d">30 ngày</button>
+                  <button type="button" class="btn btn-outline-secondary revenue-range" data-range="12m">12 tháng</button>
+                </div>
+                <select id="revenueGroup" class="form-control form-control-sm" aria-label="Nhóm doanh thu">
+                  <option value="day">Theo ngày</option>
+                  <option value="month">Theo tháng</option>
+                  <option value="year">Theo năm</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="position-relative" style="height: 320px">
+                <canvas id="revenueChart" aria-label="Biểu đồ doanh thu" role="img"></canvas>
+              </div>
+              <div id="revenueChartError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-chart-pie mr-1"></i> Trạng thái đơn hàng
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="position-relative" style="height: 320px">
+                <canvas id="orderStatusChart" aria-label="Biểu đồ trạng thái đơn hàng" role="img"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Đơn hàng gần đây</h3>
+              <div class="card-tools">
+                <a href="/admin/orders" class="btn btn-sm btn-primary">
+                  Xem tất cả <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+              </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover text-nowrap mb-0">
+                <thead>
+                  <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Sản phẩm</th>
+                    <th>Ngày đặt</th>
+                    <th>Thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th class="text-right">Tổng tiền</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (recentOrders.length > 0) { %>
+                    <% const statusNames = { pending: 'Chờ thanh toán/xác nhận', confirmed: 'Đã xác nhận', preparing: 'Đang chuẩn bị', shipping: 'Đang giao', delivered: 'Đã giao', cancelled: 'Đã hủy', paid: 'Đã thanh toán', failed: 'Thanh toán thất bại', completed: 'Hoàn tất' }; %>
+                    <% recentOrders.forEach(function(order) { %>
+                      <% const status = String(order.status || '').toLowerCase(); %>
+                      <% const badgeClass = status === 'paid' || status === 'delivered' || status === 'completed' ? 'success' : status === 'cancelled' || status === 'failed' ? 'danger' : status === 'pending' ? 'warning' : 'info'; %>
+                      <tr>
+                        <td>#<%= order.idOrder %></td>
+                        <td><%= order.username || 'Khách hàng' %></td>
+                        <td title="<%= order.productNames || '' %>">
+                          <%= order.productNames ? (order.productNames.length > 55 ? order.productNames.substring(0, 55) + '…' : order.productNames) : '—' %>
+                          <small class="text-muted">(<%= order.itemCount %>)</small>
+                        </td>
+                        <td><%= new Date(order.createdAt).toLocaleString('vi-VN') %></td>
+                        <td><%= order.paymentMethod || '—' %></td>
+                        <td><span class="badge badge-<%= badgeClass %>"><%= statusNames[status] || order.status || '—' %></span></td>
+                        <td class="text-right">
+                          <%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(order.totalAmount) %>
+                        </td>
+                        <td>
+                          <a href="/admin/orders/<%= order.idOrder %>" class="btn btn-xs btn-outline-primary" aria-label="Xem đơn hàng">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr><td colspan="8" class="text-center text-muted py-4">Chưa có đơn hàng.</td></tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Hành động nhanh</h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 mb-2">
+                  <a href="/admin/products/add" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus"></i> Thêm sản phẩm
+                  </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                  <a href="/admin/orders" class="btn btn-success btn-block">
+                    <i class="fas fa-list"></i> Xem đơn hàng
+                  </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                  <a href="/admin/users" class="btn btn-info btn-block">
+                    <i class="fas fa-users"></i> Quản lý người dùng
+                  </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                  <a href="/admin/categories" class="btn btn-warning btn-block">
+                    <i class="fas fa-tags"></i> Quản lý danh mục
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="/admin/plugins/chart.js/Chart.min.js"></script>
+<script>
+  (function () {
+    var revenueContext = document.getElementById("revenueChart").getContext("2d");
+    var statusLabels = <%- JSON.stringify(statuses.map(function (item) { var key = String(item.status || '').toLowerCase(); var labels = { pending: 'Chờ xác nhận', confirmed: 'Đã xác nhận', preparing: 'Đang chuẩn bị', shipping: 'Đang giao', delivered: 'Đã giao', cancelled: 'Đã hủy', paid: 'Đã thanh toán', failed: 'Thanh toán thất bại', completed: 'Hoàn tất' }; return labels[key] || item.status || 'Chưa xác định'; })) %>;
+    var statusValues = <%- JSON.stringify(statuses.map(function (item) { return Number(item.total) || 0; })) %>;
+    var initialLabels = <%- JSON.stringify(revenueChart.labels) %>;
+    var initialValues = <%- JSON.stringify(revenueChart.values) %>;
+    var currentRange = "30d";
+    var revenueChart = new Chart(revenueContext, {
+      type: "line",
+      data: {
+        labels: initialLabels,
+        datasets: [{
+          label: "Doanh thu",
+          data: initialValues,
+          borderColor: "#28a745",
+          backgroundColor: "rgba(40, 167, 69, 0.14)",
+          pointBackgroundColor: "#28a745",
+          pointRadius: 3,
+          borderWidth: 2,
+          fill: true,
+          lineTension: 0.25
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        tooltips: {
+          callbacks: {
+            label: function (tooltipItem) {
+              return new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+                maximumFractionDigits: 0
+              }).format(tooltipItem.yLabel);
+            }
+          }
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              callback: function (value) {
+                return new Intl.NumberFormat("vi-VN", {
+                  notation: "compact",
+                  maximumFractionDigits: 1
+                }).format(value) + " ₫";
+              }
+            }
+          }],
+          xAxes: [{ ticks: { autoSkip: true, maxTicksLimit: 12 } }]
+        }
+      }
+    });
+
+    var statusColors = ["#007bff", "#ffc107", "#17a2b8", "#28a745", "#dc3545", "#6c757d", "#6610f2"];
+    new Chart(document.getElementById("orderStatusChart").getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels: statusLabels,
+        datasets: [{
+          data: statusValues,
+          backgroundColor: statusLabels.map(function (_, index) {
+            return statusColors[index % statusColors.length];
+          })
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        legend: { position: "bottom" }
+      }
+    });
+
+    function updateRevenueChart() {
+      var group = document.getElementById("revenueGroup").value;
+      var errorElement = document.getElementById("revenueChartError");
+      errorElement.classList.add("d-none");
+
+      fetch("/admin/api/dashboard/revenue?range=" + encodeURIComponent(currentRange) +
+        "&group=" + encodeURIComponent(group), {
+          headers: { Accept: "application/json" }
+        })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("Không tải được dữ liệu doanh thu (HTTP " + response.status + ").");
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          if (!data.success) {
+            throw new Error(data.message || "Không tải được dữ liệu doanh thu.");
+          }
+          revenueChart.data.labels = data.labels;
+          revenueChart.data.datasets[0].data = data.values;
+          revenueChart.update();
+        })
+        .catch(function (error) {
+          errorElement.textContent = error.message;
+          errorElement.classList.remove("d-none");
+        });
+    }
+
+    document.querySelectorAll(".revenue-range").forEach(function (button) {
+      button.addEventListener("click", function () {
+        currentRange = this.getAttribute("data-range");
+        document.querySelectorAll(".revenue-range").forEach(function (item) {
+          item.classList.remove("btn-primary");
+          item.classList.add("btn-outline-secondary");
+        });
+        this.classList.add("btn-primary");
+        this.classList.remove("btn-outline-secondary");
+        if (currentRange === "12m" && document.getElementById("revenueGroup").value === "day") {
+          document.getElementById("revenueGroup").value = "month";
+        }
+        updateRevenueChart();
+      });
+    });
+    document.getElementById("revenueGroup").addEventListener("change", updateRevenueChart);
+  })();
+</script>

@@ -1,0 +1,121 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0"><%= paymentFilter === 'VNPAY' ? 'Quản lý thanh toán VNPay' : 'Quản lý đơn hàng' %></h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+            <li class="breadcrumb-item active">Đơn hàng</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><%= paymentFilter === 'VNPAY' ? 'Đơn hàng thanh toán qua VNPay' : 'Danh sách đơn hàng' %></h3>
+              <div class="card-tools">
+                <% if (paymentFilter === 'VNPAY') { %>
+                  <a href="/admin/orders" class="btn btn-sm btn-outline-secondary">Tất cả đơn hàng</a>
+                <% } else { %>
+                  <a href="/admin/orders?paymentMethod=VNPAY" class="btn btn-sm btn-outline-primary">Lọc đơn VNPay</a>
+                <% } %>
+              </div>
+            </div>
+            <!-- Hiển thị thông báo -->
+            <% if (typeof message !== 'undefined' && message) { %>
+            <div class="alert alert-<%= message.type === 'success' ? 'success' : 'danger' %> alert-dismissible">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <%= message.text %>
+            </div>
+            <% } %>
+            <div class="card-body">
+              <table id="ordersTable" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% orders.forEach(function(order) { %>
+                  <% const orderStatus = String(order.status || '').toLowerCase(); %>
+                  <% const statusNames = { pending: 'Chờ xác nhận', confirmed: 'Đã xác nhận', preparing: 'Đang chuẩn bị', shipping: 'Đang giao', delivered: 'Đã giao', cancelled: 'Đã hủy', paid: 'Đã thanh toán', failed: 'Thanh toán thất bại', completed: 'Hoàn tất' }; %>
+                  <tr>
+                    <td><%= order.idOrder %></td>
+                    <td><%= order.ho %> <%= order.ten %> (<%= order.username %>)</td>
+                    <td><%= new Date(order.createdAt).toLocaleDateString('vi-VN') %></td>
+                    <td><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount) %></td>
+                    <td><%= order.paymentMethod || '—' %></td>
+                    <td>
+                      <% if (orderStatus === 'pending') { %>
+                        <span class="badge badge-warning">Chờ xác nhận</span>
+                      <% } else if (orderStatus === 'confirmed') { %>
+                        <span class="badge badge-info">Đã xác nhận</span>
+                      <% } else if (orderStatus === 'preparing') { %>
+                        <span class="badge badge-primary">Đang chuẩn bị</span>
+                      <% } else if (orderStatus === 'shipping') { %>
+                        <span class="badge badge-secondary">Đang giao</span>
+                      <% } else if (orderStatus === 'delivered') { %>
+                        <span class="badge badge-success">Đã giao</span>
+                      <% } else if (orderStatus === 'cancelled') { %>
+                        <span class="badge badge-danger">Đã hủy</span>
+                      <% } else if (orderStatus === 'failed') { %>
+                        <span class="badge badge-danger">Thanh toán thất bại</span>
+                      <% } else if (statusNames[orderStatus]) { %>
+                        <span class="badge badge-success"><%= statusNames[orderStatus] %></span>
+                      <% } else { %>
+                        <span class="badge badge-secondary"><%= order.status || '—' %></span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <a href="/admin/orders/<%= order.idOrder %>" class="btn btn-info btn-sm">
+                        <i class="fas fa-eye"></i> Chi tiết
+                      </a>
+                      <form method="post" action="/admin/orders/<%= order.idOrder %>/update-status" style="display: inline;">
+                        <select name="status" class="form-control form-control-sm d-inline" style="width: auto;" onchange="this.form.submit()">
+                          <option value="pending" <%= orderStatus === 'pending' ? 'selected' : '' %>>Chờ xác nhận</option>
+                          <option value="confirmed" <%= orderStatus === 'confirmed' ? 'selected' : '' %>>Đã xác nhận</option>
+                          <option value="preparing" <%= orderStatus === 'preparing' ? 'selected' : '' %>>Đang chuẩn bị</option>
+                          <option value="shipping" <%= orderStatus === 'shipping' ? 'selected' : '' %>>Đang giao</option>
+                          <option value="delivered" <%= orderStatus === 'delivered' ? 'selected' : '' %>>Đã giao</option>
+                          <option value="cancelled" <%= orderStatus === 'cancelled' ? 'selected' : '' %>>Đã hủy</option>
+                        </select>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  $(function () {
+    $("#ordersTable").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "order": [[ 0, "desc" ]]
+    });
+  });
+</script>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chi Tiết Đơn Hàng #<%= order.idOrder %> | Admin</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/admin/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/admin" class="nav-link">Home</a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/admin" class="brand-link">
+      <img src="/admin/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">Helmet Store</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <li class="nav-item">
+            <a href="/admin" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/orders" class="nav-link active">
+              <i class="nav-icon fas fa-shopping-cart"></i>
+              <p>Đơn Hàng</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Chi Tiết Đơn Hàng #<%= order.idOrder %></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+              <li class="breadcrumb-item"><a href="/admin/orders">Đơn Hàng</a></li>
+              <li class="breadcrumb-item active">Chi tiết #<%= order.idOrder %></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- Thông tin đơn hàng -->
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-shopping-cart"></i>
+                  Thông Tin Đơn Hàng
+                </h3>
+                <div class="card-tools">
+                  <% 
+                    let statusClass = '';
+                    let statusText = '';
+                    switch(order.status) {
+                      case 'pending':
+                        statusClass = 'warning';
+                        statusText = 'Chờ Xác Nhận';
+                        break;
+                      case 'confirmed':
+                        statusClass = 'info';
+                        statusText = 'Đã Xác Nhận';
+                        break;
+                      case 'preparing':
+                        statusClass = 'primary';
+                        statusText = 'Đang Chuẩn Bị';
+                        break;
+                      case 'shipping':
+                        statusClass = 'secondary';
+                        statusText = 'Đang Vận Chuyển';
+                        break;
+                      case 'delivered':
+                        statusClass = 'success';
+                        statusText = 'Đã Giao';
+                        break;
+                      case 'cancelled':
+                        statusClass = 'danger';
+                        statusText = 'Đã Hủy';
+                        break;
+                      default:
+                        statusClass = 'light';
+                        statusText = order.status;
+                    }
+                  %>
+                  <span class="badge badge-<%= statusClass %> badge-lg"><%= statusText %></span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <strong><i class="fas fa-calendar mr-1"></i> Ngày Đặt</strong>
+                    <p class="text-muted">
+                      <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) %>
+                    </p>
+                    <hr>
+
+                    <strong><i class="fas fa-user mr-1"></i> Khách Hàng</strong>
+                    <p class="text-muted"><%= order.customerName %></p>
+                    <hr>
+
+                    <strong><i class="fas fa-phone mr-1"></i> Điện Thoại</strong>
+                    <p class="text-muted"><%= order.customerPhone %></p>
+                  </div>
+                  <div class="col-md-6">
+                    <strong><i class="fas fa-credit-card mr-1"></i> Phương Thức Thanh Toán</strong>
+                    <p class="text-muted">
+                      <% if (order.paymentMethod === 'COD') { %>
+                        <i class="fas fa-money-bill-wave text-success"></i> Thanh toán khi nhận hàng (COD)
+                      <% } else { %>
+                        <%= order.paymentMethod %>
+                      <% } %>
+                    </p>
+                    <hr>
+
+                    <strong><i class="fas fa-dollar-sign mr-1"></i> Trạng Thái Thanh Toán</strong>
+                    <p class="text-muted">
+                      <% if (order.paymentStatus === 'unpaid') { %>
+                        <span class="badge badge-warning">Chưa Thanh Toán</span>
+                      <% } else if (order.paymentStatus === 'paid') { %>
+                        <span class="badge badge-success">Đã Thanh Toán</span>
+                      <% } else { %>
+                        <%= order.paymentStatus %>
+                      <% } %>
+                    </p>
+                    <hr>
+
+                    <strong><i class="fas fa-money-bill mr-1"></i> Tổng Tiền</strong>
+                    <p class="text-muted text-lg">
+                      <strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount) %></strong>
+                    </p>
+                  </div>
+                </div>
+
+                <strong><i class="fas fa-map-marker-alt mr-1"></i> Địa Chỉ Giao Hàng</strong>
+                <p class="text-muted"><%= order.shippingAddress %></p>
+
+                <% if (order.orderNotes && order.orderNotes.trim() !== '') { %>
+                <hr>
+                <strong><i class="fas fa-sticky-note mr-1"></i> Ghi Chú</strong>
+                <p class="text-muted"><%= order.orderNotes %></p>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Danh sách sản phẩm -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-list"></i>
+                  Danh Sách Sản Phẩm
+                </h3>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>Hình Ảnh</th>
+                      <th>Sản Phẩm</th>
+                      <th>Size</th>
+                      <th>Đơn Giá</th>
+                      <th>Số Lượng</th>
+                      <th>Thành Tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% order.items.forEach(item => { %>
+                    <tr>
+                      <td>
+                        <img src="/img/<%= item.imgProduct %>" alt="<%= item.nameProduct %>" 
+                             style="width: 50px; height: 50px; object-fit: cover;" class="img-circle">
+                      </td>
+                      <td><%= item.nameProduct %></td>
+                      <td><span class="badge badge-info"><%= item.size %></span></td>
+                      <td><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price) %></td>
+                      <td><span class="badge badge-primary"><%= item.quantity %></span></td>
+                      <td><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.quantity * item.price) %></strong></td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cập nhật trạng thái -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-cog"></i>
+                  Cập Nhật Trạng Thái
+                </h3>
+              </div>
+              <div class="card-body">
+                <form id="updateStatusForm">
+                  <div class="form-group">
+                    <label for="orderStatus">Trạng Thái Đơn Hàng</label>
+                    <select class="form-control" id="orderStatus" name="status">
+                      <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Chờ Xác Nhận</option>
+                      <option value="confirmed" <%= order.status === 'confirmed' ? 'selected' : '' %>>Đã Xác Nhận</option>
+                      <option value="preparing" <%= order.status === 'preparing' ? 'selected' : '' %>>Đang Chuẩn Bị</option>
+                      <option value="shipping" <%= order.status === 'shipping' ? 'selected' : '' %>>Đang Vận Chuyển</option>
+                      <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Đã Giao</option>
+                      <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Đã Hủy</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-save"></i> Cập Nhật
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Timeline trạng thái -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-timeline"></i>
+                  Timeline Đơn Hàng
+                </h3>
+              </div>
+              <div class="card-body">
+                <div class="timeline">
+                  <!-- Timeline items sẽ được tạo dựa trên trạng thái -->
+                  <div class="time-label">
+                    <span class="bg-red">Đặt hàng</span>
+                  </div>
+                  <div>
+                    <i class="fas fa-shopping-cart bg-blue"></i>
+                    <div class="timeline-item">
+                      <span class="time"><i class="fas fa-clock"></i> <%= new Date(order.createdAt).toLocaleTimeString('vi-VN') %></span>
+                      <h3 class="timeline-header">Đơn hàng được tạo</h3>
+                      <div class="timeline-body">
+                        Đơn hàng #<%= order.idOrder %> đã được đặt thành công
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <% if (['confirmed', 'preparing', 'shipping', 'delivered'].includes(order.status)) { %>
+                  <div>
+                    <i class="fas fa-check bg-green"></i>
+                    <div class="timeline-item">
+                      <h3 class="timeline-header">Đã xác nhận</h3>
+                      <div class="timeline-body">
+                        Đơn hàng đã được xác nhận và đang được xử lý
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+
+                  <% if (['preparing', 'shipping', 'delivered'].includes(order.status)) { %>
+                  <div>
+                    <i class="fas fa-box bg-yellow"></i>
+                    <div class="timeline-item">
+                      <h3 class="timeline-header">Đang chuẩn bị</h3>
+                      <div class="timeline-body">
+                        Đơn hàng đang được chuẩn bị và đóng gói
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+
+                  <% if (['shipping', 'delivered'].includes(order.status)) { %>
+                  <div>
+                    <i class="fas fa-truck bg-purple"></i>
+                    <div class="timeline-item">
+                      <h3 class="timeline-header">Đang vận chuyển</h3>
+                      <div class="timeline-body">
+                        Đơn hàng đang trên đường giao đến bạn
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+
+                  <% if (order.status === 'delivered') { %>
+                  <div>
+                    <i class="fas fa-check-double bg-success"></i>
+                    <div class="timeline-item">
+                      <h3 class="timeline-header">Đã giao thành công</h3>
+                      <div class="timeline-body">
+                        Đơn hàng đã được giao thành công
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+
+                  <% if (order.status === 'cancelled') { %>
+                  <div>
+                    <i class="fas fa-times bg-danger"></i>
+                    <div class="timeline-item">
+                      <h3 class="timeline-header">Đã hủy</h3>
+                      <div class="timeline-body">
+                        Đơn hàng đã bị hủy
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+
+                  <div>
+                    <i class="fas fa-clock bg-gray"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2024 Helmet Store.</strong>
+    All rights reserved.
+  </footer>
+</div>
+
+<!-- jQuery -->
+<script src="/admin/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/admin/dist/js/adminlte.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Xử lý form cập nhật trạng thái
+    $('#updateStatusForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const newStatus = $('#orderStatus').val();
+        const orderId = '<%= order.idOrder %>';
+        
+        if (confirm('Bạn có chắc muốn cập nhật trạng thái đơn hàng?')) {
+            $.ajax({
+                url: `/admin/orders/${orderId}/update-status`,
+                method: 'POST',
+                data: {
+                    status: newStatus
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Cập nhật trạng thái thành công!');
+                        location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra khi cập nhật trạng thái!');
+                }
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Quản lý sản phẩm</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+            <li class="breadcrumb-item active">Sản phẩm</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Danh sách sản phẩm</h3>
+              <div class="card-tools">
+                <a href="/admin/products/add" class="btn btn-primary btn-sm">
+                  <i class="fas fa-plus"></i> Thêm sản phẩm
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <table
+                id="productsTable"
+                class="table table-bordered table-hover"
+              >
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Danh mục</th>
+                    <th>Hình ảnh</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% products.forEach(function(product) { %>
+                  <tr>
+                    <td><%= product.idProduct %></td>
+                    <td><%= product.nameProduct %></td>
+                    <td>
+                      <%= new Intl.NumberFormat('vi-VN', { style: 'currency',
+                      currency: 'VND' }).format(product.priceProduct) %>
+                    </td>
+                    <td><%= product.nameCat || 'Chưa phân loại' %></td>
+                    <td>
+                      <% if (product.imgProduct) { %>
+                      <img
+                        src="/<%= product.imgProduct %>"
+                        alt="<%= product.nameProduct %>"
+                        style="
+                          width: 60px;
+                          height: 60px;
+                          object-fit: cover;
+                          border-radius: 5px;
+                          border: 1px solid #ddd;
+                        "
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                      />
+                      <div
+                        style="
+                          display: none;
+                          width: 60px;
+                          height: 60px;
+                          background: #f8f9fa;
+                          border: 1px solid #ddd;
+                          border-radius: 5px;
+                          align-items: center;
+                          justify-content: center;
+                          color: #6c757d;
+                          font-size: 20px;
+                        "
+                      >
+                        <i class="fas fa-image"></i>
+                      </div>
+                      <% } else { %>
+                      <div
+                        style="
+                          width: 60px;
+                          height: 60px;
+                          background: #f8f9fa;
+                          border: 1px solid #ddd;
+                          border-radius: 5px;
+                          display: inline-flex;
+                          align-items: center;
+                          justify-content: center;
+                          color: #6c757d;
+                          font-size: 20px;
+                        "
+                      >
+                        <i class="fas fa-image"></i>
+                      </div>
+                      <% } %>
+                    </td>
+                    <td>
+                      <a
+                        href="/admin/products/edit/<%= product.idProduct %>"
+                        class="btn btn-info btn-sm"
+                      >
+                        <i class="fas fa-edit"></i> Sửa
+                      </a>
+                      <form
+                        method="post"
+                        action="/admin/products/delete/<%= product.idProduct %>"
+                        style="display: inline"
+                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')"
+                      >
+                        <button type="submit" class="btn btn-danger btn-sm">
+                          <i class="fas fa-trash"></i> Xóa
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Hiển thị thông báo khi có query parameter success (chạy trước khi jQuery load)
+  (function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    
+    if (success === 'add') {
+      alert('✅ Đã thêm sản phẩm mới thành công!');
+      // Xóa parameter khỏi URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (success === 'edit') {
+      alert('✅ Đã cập nhật sản phẩm thành công!');
+      // Xóa parameter khỏi URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (success === 'delete') {
+      alert('✅ Đã xóa sản phẩm thành công!');
+      // Xóa parameter khỏi URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  })();
+
+  // DataTable initialization (chạy sau khi jQuery load)
+  $(function () {
+    $("#productsTable")
+      .DataTable({
+        responsive: true,
+        lengthChange: false,
+        autoWidth: false,
+        buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
+      })
+      .buttons()
+      .container()
+      .appendTo("#productsTable_wrapper .col-md-6:eq(0)");
+  });
+</script>

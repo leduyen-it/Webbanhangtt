@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>Helmet Store</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="../lib/slick/slick.css" rel="stylesheet" />
+    <link href="../lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/premium.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i> 
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i> +01234567890
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="/" class="nav-item nav-link">Trang Chủ</a>
+              <a href="/san-pham" class="nav-item nav-link">Sản Phẩm</a>
+              <!-- <a href="product-detail.html" class="nav-item nav-link">Product Detail</a> -->
+              <a href="/cart" class="nav-item nav-link active">Giỏ Hàng</a>
+              <a href="/thanh-toan" class="nav-item nav-link">Thanh Toán</a>
+              <a href="/users/tai-khoan" class="nav-item nav-link"
+                >Tài khoản của bạn</a
+              >
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Trang khác</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/wishlist" class="dropdown-item"
+                    >Sản phẩm đã thích</a
+                  >
+                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
+                </div>
+              </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <% if (user) { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  ><i class="fa fa-user"></i> <%= user.username %></a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/tai-khoan" class="dropdown-item"
+                    >Tài khoản của tôi</a
+                  >
+                  <a href="/orders" class="dropdown-item">Đơn hàng</a>
+                  <a href="/users/dang-xuat" class="dropdown-item">Đăng xuất</a>
+                </div>
+              </div>
+              <% } else { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Tài khoản</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                  <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
+                </div>
+              </div>
+              <% } %>
+
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="/">
+                <img src="../img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(<%= wishlistCount || 0 %>)</span>
+              </a>
+              <a href="/cart" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(<%= cartCount || 0 %>)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item active">Giỏ hàng</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Cart Start -->
+    <div class="cart-page">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="cart-page-inner">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>
+                        <input
+                          type="checkbox"
+                          id="selectAll"
+                          onchange="selectAllItems()"
+                        />
+                      </th>
+                      <th>Tên sản phẩm</th>
+                      <th>Giá</th>
+                      <th>Số lượng</th>
+                      <th>Tổng</th>
+                      <th>Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody class="align-middle">
+                    <% if (cartItems && cartItems.length > 0) { %> <% for (let
+                    item of cartItems) { %>
+                    <tr>
+                      <td>
+                        <input
+                          type="checkbox"
+                          class="item-checkbox"
+                          data-cart-id="<%= item.idCart %>"
+                          data-price="<%= item.priceProduct %>"
+                          data-quantity="<%= item.quantity %>"
+                          onchange="updateTotal()"
+                        />
+                      </td>
+                      <td>
+                        <div class="img">
+                          <a
+                            href="/san-pham/<%= item.nameProduct.toLowerCase().replace(/\s+/g, '-').replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, 'a').replace(/[èéẹẻẽêềếệểễ]/g, 'e').replace(/[ìíịỉĩ]/g, 'i').replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, 'o').replace(/[ùúụủũưừứựửữ]/g, 'u').replace(/[ỳýỵỷỹ]/g, 'y').replace(/đ/g, 'd') %>"
+                            ><img src="/<%=item.imgProduct%>" alt="Image"
+                          /></a>
+                          <p><%= item.nameProduct%></p>
+                        </div>
+                      </td>
+                      <td><%=item.priceProduct.toLocaleString()%> đ</td>
+                      <td>
+                        <div class="qty">
+                          <button
+                            class="btn-minus qty-btn"
+                            data-cart-id="<%= item.idCart %>"
+                          >
+                            <i class="fa fa-minus"></i>
+                          </button>
+                          <input
+                            type="text"
+                            value="<%= item.quantity %>"
+                            readonly
+                          />
+                          <button
+                            class="btn-plus qty-btn"
+                            data-cart-id="<%= item.idCart %>"
+                          >
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <%=(item.quantity *
+                        item.priceProduct).toLocaleString()%> đ
+                      </td>
+                      <td>
+                        <button
+                          class="remove-from-cart delete-btn"
+                          data-cart-id="<%= item.idCart %>"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <% } %> <% } else { %>
+                    <tr>
+                      <td colspan="6" class="text-center">
+                        <p>Giỏ hàng trống</p>
+                        <a href="/san-pham" class="btn btn-primary"
+                          >Tiếp tục mua sắm</a
+                        >
+                      </td>
+                    </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="cart-page-inner">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="coupon">
+                    <input type="text" placeholder="Mã giảm giá" />
+                    <button>Áp dụng</button>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="cart-summary">
+                    <div class="cart-content">
+                      <h1>Thống kê giỏ hàng</h1>
+                      <p>
+                        Tổng tiền sản phẩm<span id="subtotal"
+                          ><%= (cartTotal || 0).toLocaleString() %> đ</span
+                        >
+                      </p>
+                      <p>Phí ship<span id="shipping">30.000 đ</span></p>
+                      <h2>
+                        Tổng cộng<span id="total"
+                          ><%= ((cartTotal || 0) + 30000).toLocaleString() %>
+                          đ</span
+                        >
+                      </h2>
+                    </div>
+                    <div class="cart-btn">
+                      <% if (cartItems && cartItems.length > 0) { %>
+                      <button
+                        onclick="checkout()"
+                        class="btn btn-primary"
+                        id="checkoutBtn"
+                      >
+                        Thanh Toán
+                      </button>
+                      <% } else { %>
+                      <button class="btn btn-secondary" disabled>
+                        Giỏ hàng trống
+                      </button>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Cart End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Liên Hệ</h2>
+              <div class="contact-info">
+                <p><i class="fa fa-map-marker"></i> Hà Nội, Việt Nam</p>
+                <p><i class="fa fa-envelope"></i>leduyenltbn@gmail.com</p>
+                <p><i class="fa fa-phone"></i>0123456789</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Theo Dõi Tôi</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href="https://www.facebook.com/ybx1802"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                  <a href="https://www.linkedin.com/in/duy%C3%AAn-l%C3%AA-49b12b3ba/"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Cửa Hàng</h2>
+              <ul>
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Chính sách bảo mật</a></li>
+                <li><a href="#">Hình thức vận chuyển</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Mua Hàng</h2>
+              <ul>
+                <li><a href="#">Chính sách thanh toán</a></li>
+                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="#">Chính sách hoàn trả</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>Nhận thanh toán bằng:</h2>
+              <img src="../img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Chứng chỉ bảo mật:</h2>
+              <img src="../img/godaddy.svg" alt="Payment Security" />
+              <img src="../img/norton.svg" alt="Payment Security" />
+              <img src="../img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy;
+              <a href="https://www.facebook.com/tran.huy.928441">Helmet Store</a
+              >. All Rights Reserved
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="../lib/easing/easing.min.js"></script>
+    <script src="../lib/slick/slick.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="../js/main.js"></script>
+    <script>
+      function updateQuantity(cartId, newQuantity) {
+        if (newQuantity < 1) {
+          // Khi giảm về 0, tự động xóa sản phẩm
+          removeFromCart(cartId);
+          return;
+        }
+
+        // Kiểm tra nếu đang update rồi thì bỏ qua
+        if (window.cartUpdating) return;
+        window.cartUpdating = true;
+
+        // Cập nhật data-quantity của checkbox ngay lúc này
+        const checkbox = document.querySelector(`.item-checkbox[data-cart-id="${cartId}"]`);
+        if (checkbox) {
+          checkbox.dataset.quantity = newQuantity;
+          // Cập nhật tổng tiền ngay lúc này (nếu sản phẩm được chọn)
+          updateTotal();
+        }
+
+        // Lưu trạng thái checkbox trước khi update
+        saveCheckboxState();
+
+        $.ajax({
+          url: "/cart/update",
+          method: "POST",
+          data: {
+            idCart: cartId,
+            quantity: newQuantity,
+          },
+          success: function (response) {
+            if (response.success) {
+              // Cập nhật giá trị input trong bảng mà không reload
+              const inputElement = document.querySelector(
+                `.qty-btn[data-cart-id="${cartId}"]`
+              ).parentElement.querySelector("input");
+              if (inputElement) {
+                inputElement.value = newQuantity;
+              }
+              
+              // Cập nhật cột Tổng trong bảng
+              const totalCell = document.querySelector(
+                `.item-checkbox[data-cart-id="${cartId}"]`
+              ).closest("tr").querySelector("td:nth-child(5)");
+              if (totalCell && checkbox) {
+                const price = Number(checkbox.dataset.price);
+                totalCell.textContent = (price * newQuantity).toLocaleString() + " đ";
+              }
+
+              window.cartUpdating = false;
+            } else {
+              alert(response.message);
+              window.cartUpdating = false;
+            }
+          },
+          error: function () {
+            alert("Lỗi khi cập nhật số lượng");
+            window.cartUpdating = false;
+          },
+        });
+      }
+
+      // Function để xóa sản phẩm khỏi giỏ hàng
+      function removeFromCart(cartId) {
+        // Kiểm tra nếu đang update rồi thì bỏ qua
+        if (window.cartUpdating) return;
+        window.cartUpdating = true;
+
+        $.ajax({
+          url: "/cart/remove",
+          method: "POST",
+          data: {
+            idCart: cartId,
+          },
+          success: function (response) {
+            if (response.success) {
+              // Xóa dòng sản phẩm khỏi bảng mà không reload
+              const row = document.querySelector(`.item-checkbox[data-cart-id="${cartId}"]`).closest("tr");
+              if (row) {
+                row.style.transition = "opacity 0.3s ease";
+                row.style.opacity = "0";
+                setTimeout(() => {
+                  row.remove();
+                  
+                  // Kiểm tra nếu giỏ hàng trống thì reload để hiển thị "Giỏ hàng trống"
+                  const itemsRemaining = document.querySelectorAll(".item-checkbox").length;
+                  if (itemsRemaining === 0) {
+                    location.reload();
+                  } else {
+                    // Cập nhật tổng tiền
+                    updateTotal();
+                    window.cartUpdating = false;
+                  }
+                }, 300);
+              }
+            } else {
+              alert(response.message || "Có lỗi xảy ra khi xóa sản phẩm");
+              window.cartUpdating = false;
+            }
+          },
+          error: function () {
+            alert("Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng");
+            window.cartUpdating = false;
+          },
+        });
+      }
+
+      // Function để chọn/bỏ chọn tất cả sản phẩm
+      function selectAllItems() {
+        const selectAllCheckbox = document.getElementById("selectAll");
+        const itemCheckboxes = document.querySelectorAll(".item-checkbox");
+
+        itemCheckboxes.forEach((checkbox) => {
+          checkbox.checked = selectAllCheckbox.checked;
+        });
+
+        updateTotal();
+      }
+
+      // Function để cập nhật tổng tiền
+      function updateTotal() {
+        const itemCheckboxes = document.querySelectorAll(
+          ".item-checkbox:checked"
+        );
+        let subtotal = 0;
+
+        itemCheckboxes.forEach((checkbox) => {
+          const price = Number(checkbox.dataset.price);
+          const quantity = parseInt(checkbox.dataset.quantity);
+          subtotal += price * quantity;
+        });
+
+        const shipping = itemCheckboxes.length > 0 ? 30000 : 0;
+        const total = subtotal + shipping;
+
+        // Cập nhật hiển thị
+        document.getElementById("subtotal").textContent =
+          subtotal.toLocaleString() + " đ";
+        document.getElementById("total").textContent =
+          total.toLocaleString() + " đ";
+
+        // Vô hiệu hóa nút thanh toán nếu không có sản phẩm nào được chọn
+        const checkoutBtn = document.getElementById("checkoutBtn");
+        if (checkoutBtn) {
+          checkoutBtn.disabled = itemCheckboxes.length === 0;
+          checkoutBtn.classList.toggle('btn-secondary', itemCheckboxes.length === 0);
+          checkoutBtn.classList.toggle('btn-primary', itemCheckboxes.length > 0);
+          checkoutBtn.textContent =
+            itemCheckboxes.length === 0
+              ? "Chọn sản phẩm để thanh toán"
+              : "Thanh Toán (" + itemCheckboxes.length + " sản phẩm)";
+        }
+
+        // Cập nhật trạng thái nút tăng giảm số lượng
+        updateQuantityButtonsState();
+      }
+
+      // Function để cập nhật trạng thái các nút xóa và tăng/giảm
+      function updateQuantityButtonsState() {
+        const allDeleteButtons = document.querySelectorAll(".delete-btn");
+        const allQtyButtons = document.querySelectorAll(".qty-btn");
+        const selectedCheckboxes = document.querySelectorAll(".item-checkbox:checked");
+
+        // Nếu có sản phẩm được chọn, vô hiệu hóa nút xóa
+        const hasSelectedItems = selectedCheckboxes.length > 0;
+
+        allDeleteButtons.forEach((btn) => {
+          if (hasSelectedItems) {
+            btn.style.opacity = "0.5";
+            btn.style.cursor = "not-allowed";
+            btn.style.pointerEvents = "none";
+          } else {
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+            btn.style.pointerEvents = "auto";
+          }
+        });
+
+        // Vô hiệu hóa nút +/- cho sản phẩm được chọn
+        const allCheckboxes = document.querySelectorAll(".item-checkbox");
+        allCheckboxes.forEach((checkbox) => {
+          const cartId = checkbox.dataset.cartId;
+          const qtyBtns = document.querySelectorAll(`.qty-btn[data-cart-id="${cartId}"]`);
+          
+          if (checkbox.checked) {
+            // Nếu được chọn, vô hiệu hóa nút +/-
+            qtyBtns.forEach(btn => {
+              btn.style.opacity = "0.5";
+              btn.style.cursor = "not-allowed";
+              btn.style.pointerEvents = "none";
+              btn.disabled = true;
+            });
+          } else {
+            // Nếu không được chọn, bật lại nút +/-
+            qtyBtns.forEach(btn => {
+              btn.style.opacity = "1";
+              btn.style.cursor = "pointer";
+              btn.style.pointerEvents = "auto";
+              btn.disabled = false;
+            });
+          }
+        });
+      }
+
+      // Function để xử lý thanh toán chỉ các sản phẩm được chọn
+      function checkout() {
+        const selectedItems = document.querySelectorAll(
+          ".item-checkbox:checked"
+        );
+
+        if (selectedItems.length === 0) {
+          alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán");
+          return;
+        }
+
+        const selectedCartIds = Array.from(selectedItems).map(
+          (checkbox) => checkbox.dataset.cartId
+        );
+
+        // Chuyển hướng đến trang thanh toán với các sản phẩm đã chọn
+        window.location.href = "/thanh-toan?items=" + selectedCartIds.join(",");
+      }
+
+      // Khởi tạo khi trang load
+      document.addEventListener("DOMContentLoaded", function () {
+        // Khởi tạo flag để tránh double click
+        window.cartUpdating = false;
+
+        // Xóa tất cả event listeners cũ từ main.js để tránh conflict
+        const oldQtyButtons = document.querySelectorAll(".qty-btn");
+        oldQtyButtons.forEach(btn => {
+          const newBtn = btn.cloneNode(true);
+          btn.parentNode.replaceChild(newBtn, btn);
+        });
+
+        // Khôi phục trạng thái checkbox từ localStorage
+        restoreCheckboxState();
+        updateTotal();
+
+        // Gắn event listeners chỉ một lần bằng event delegation để tránh nhảy 2 cái
+        if (!window.cartEventListenersAttached) {
+          // Event listener cho nút tăng/giảm số lượng và xóa
+          document.addEventListener("click", function (e) {
+            // Nếu đang update, bỏ qua toàn bộ click event
+            if (window.cartUpdating) return;
+
+            const btn = e.target.closest(".qty-btn");
+            if (btn) {
+              e.preventDefault();
+              e.stopPropagation(); // Ngăn event bubble lên
+
+              // Nếu nút bị disable, bỏ qua
+              if (btn.disabled) return;
+
+              const cartId = btn.getAttribute("data-cart-id");
+              const isMinusBtn = btn.classList.contains("btn-minus");
+              
+              // Lấy giá trị hiện tại từ input tương ứng
+              const input = btn.parentElement.querySelector("input");
+              let quantity = parseInt(input.value);
+              
+              if (isMinusBtn) {
+                quantity--; // Cho phép giảm xuống 0
+                if (quantity < 0) quantity = 0;
+              } else {
+                quantity++;
+              }
+              
+              updateQuantity(cartId, quantity);
+              return; // Thoát để tránh tiếp tục xử lý
+            }
+
+            // Event listener cho nút xóa
+            const deleteBtn = e.target.closest(".delete-btn");
+            if (deleteBtn) {
+              e.preventDefault();
+              e.stopPropagation(); // Ngăn event bubble lên
+
+              const cartId = deleteBtn.getAttribute("data-cart-id");
+              removeFromCart(cartId);
+            }
+          }, true); // Capture phase để chắc chắn xử lý trước các listener khác
+
+          window.cartEventListenersAttached = true;
+        }
+      });
+
+      // Function để lưu trạng thái checkbox vào localStorage
+      function saveCheckboxState() {
+        const selectedItems = [];
+        const selectAllChecked = document.getElementById("selectAll").checked;
+        
+        document.querySelectorAll(".item-checkbox:checked").forEach((checkbox) => {
+          selectedItems.push(checkbox.dataset.cartId);
+        });
+
+        localStorage.setItem("selectedCartItems", JSON.stringify(selectedItems));
+        localStorage.setItem("selectAllChecked", selectAllChecked);
+      }
+
+      // Function để khôi phục trạng thái checkbox từ localStorage
+      function restoreCheckboxState() {
+        const selectedItems = JSON.parse(localStorage.getItem("selectedCartItems") || "[]");
+        const selectAllChecked = localStorage.getItem("selectAllChecked") === "true";
+
+        if (selectedItems.length > 0) {
+          selectedItems.forEach((cartId) => {
+            const checkbox = document.querySelector(`.item-checkbox[data-cart-id="${cartId}"]`);
+            if (checkbox) {
+              checkbox.checked = true;
+            }
+          });
+
+          // Cập nhật selectAll checkbox
+          const allCheckboxes = document.querySelectorAll(".item-checkbox");
+          const checkedCheckboxes = document.querySelectorAll(".item-checkbox:checked");
+          document.getElementById("selectAll").checked = 
+            allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length;
+        } else if (selectAllChecked) {
+          document.getElementById("selectAll").checked = true;
+          selectAllItems();
+        }
+      }
+
+      // Lưu trạng thái khi người dùng thay đổi checkbox
+      document.addEventListener("change", function(e) {
+        if (e.target.classList.contains("item-checkbox") || e.target.id === "selectAll") {
+          saveCheckboxState();
+        }
+      });
+    </script>
+  </body>
+</html>

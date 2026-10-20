@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>Helmet Store</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="lib/slick/slick.css" rel="stylesheet" />
+    <link href="lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/premium.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i> leduyenltbn@gmail.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i> +01234567890
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="/" class="nav-item nav-link">Trang Chủ</a>
+              <a href="/san-pham" class="nav-item nav-link">Sản Phẩm</a>
+              <!-- <a href="product-detail.html" class="nav-item nav-link">Product Detail</a> -->
+              <a href="/cart" class="nav-item nav-link">Giỏ Hàng</a>
+              <a href="/thanh-toan" class="nav-item nav-link">Thanh Toán</a>
+              <a href="/users/tai-khoan" class="nav-item nav-link"
+                >Tài khoản của bạn</a
+              >
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle active"
+                  data-toggle="dropdown"
+                  >Sản phẩm đã thích</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
+                </div>
+              </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <% if (user) { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  ><i class="fa fa-user"></i> <%= user.username %></a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/tai-khoan" class="dropdown-item"
+                    >Tài khoản của tôi</a
+                  >
+                  <a href="/orders" class="dropdown-item">Đơn hàng</a>
+                  <a href="/users/dang-xuat" class="dropdown-item">Đăng xuất</a>
+                </div>
+              </div>
+              <% } else { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Tài khoản</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                  <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="/">
+                <img src="img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(<%= wishlistCount || 0 %>)</span>
+              </a>
+              <a href="/cart" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(<%= cartCount || 0 %>)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Products</a></li>
+          <li class="breadcrumb-item active">Wishlist</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Wishlist Start -->
+    <div class="wishlist-page">
+      <div class="container-fluid">
+        <div class="wishlist-page-inner">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Tên sản phẩm</th>
+                      <th>Giá</th>
+                      <th>Số lượng</th>
+                      <th>Thêm vào giỏ</th>
+                      <th>Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody class="align-middle">
+                    <% if (wishlistItems && wishlistItems.length > 0) { %> <%
+                    for (let item of wishlistItems) { %>
+                    <tr>
+                      <td>
+                        <div class="img">
+                          <a
+                            href="/san-pham/<%= item.nameProduct.toLowerCase().replace(/\s+/g, '-').replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, 'a').replace(/[èéẹẻẽêềếệểễ]/g, 'e').replace(/[ìíịỉĩ]/g, 'i').replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, 'o').replace(/[ùúụủũưừứựửữ]/g, 'u').replace(/[ỳýỵỷỹ]/g, 'y').replace(/đ/g, 'd') %>"
+                            ><img src="/<%=item.imgProduct%>" alt="Image"
+                          /></a>
+                          <p><%=item.nameProduct%></p>
+                        </div>
+                      </td>
+                      <td><%=item.priceProduct.toLocaleString()%> đ</td>
+                      <td style="text-align: center">
+                        <div
+                          class="qty wishlist-qty"
+                          style="
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 3px;
+                            margin: 0 auto;
+                          "
+                        >
+                          <button
+                            class="btn-minus wishlist-btn"
+                            data-product-id="<%= item.idProduct %>"
+                            data-change="-1"
+                            style="
+                              width: 32px;
+                              height: 32px;
+                              border: 1px solid #007bff;
+                              background: #007bff;
+                              color: white;
+                              border-radius: 4px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              cursor: pointer;
+                              outline: none;
+                            "
+                          >
+                            <i
+                              class="fa fa-minus"
+                              style="
+                                font-size: 10px;
+                                color: white;
+                                pointer-events: none;
+                              "
+                            ></i>
+                          </button>
+                          <input
+                            type="text"
+                            value="1"
+                            id="qty-<%= item.idProduct %>"
+                            min="1"
+                            readonly
+                            style="
+                              width: 50px;
+                              height: 32px;
+                              text-align: center;
+                              border: 1px solid #ddd;
+                              border-radius: 4px;
+                              margin: 0;
+                              font-size: 14px;
+                              background: white;
+                              color: #333;
+                              font-weight: bold;
+                              box-sizing: border-box;
+                              padding: 0;
+                              line-height: 30px;
+                            "
+                          />
+                          <button
+                            class="btn-plus wishlist-btn"
+                            data-product-id="<%= item.idProduct %>"
+                            data-change="1"
+                            style="
+                              width: 32px;
+                              height: 32px;
+                              border: 1px solid #28a745;
+                              background: #28a745;
+                              color: white;
+                              border-radius: 4px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              cursor: pointer;
+                              outline: none;
+                            "
+                          >
+                            <i
+                              class="fa fa-plus"
+                              style="
+                                font-size: 10px;
+                                color: white;
+                                pointer-events: none;
+                              "
+                            ></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td style="text-align: center">
+                        <button
+                          class="btn btn-primary btn-sm move-to-cart"
+                          data-product-id="<%= item.idProduct %>"
+                          data-quantity="1"
+                          data-size="M"
+                          style="margin-bottom: 5px; width: 120px"
+                        >
+                          <i class="fa fa-cart-plus"></i> Thêm vào giỏ
+                        </button>
+                      </td>
+                      <td style="text-align: center">
+                        <button
+                          class="btn btn-danger btn-sm remove-from-wishlist"
+                          data-product-id="<%= item.idProduct %>"
+                          style="width: 50px; height: 35px"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <% } %> <% } else { %>
+                    <tr>
+                      <td colspan="5" class="text-center">
+                        <p>Danh sách yêu thích trống</p>
+                        <a href="/san-pham" class="btn btn-primary"
+                          >Tiếp tục mua sắm</a
+                        >
+                      </td>
+                    </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Wishlist End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Liên Hệ</h2>
+              <div class="contact-info">
+                <p><i class="fa fa-map-marker"></i>Hà Nội, Việt Nam</p>
+                <p><i class="fa fa-envelope"></i>leduyenltbn@gmail.com</p>
+                <p><i class="fa fa-phone"></i>+01234567890</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Theo Dõi Tôi</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href="https://www.facebook.com/ybx1802"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                  <a href="https://www.linkedin.com/in/huy-tran-57777b202/"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Cửa Hàng</h2>
+              <ul>
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Chính sách bảo mật</a></li>
+                <li><a href="#">Hình thức vận chuyển</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Mua Hàng</h2>
+              <ul>
+                <li><a href="#">Chính sách thanh toán</a></li>
+                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="#">Chính sách hoàn trả</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>Nhận thanh toán bằng:</h2>
+              <img src="img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Chứng chỉ bảo mật:</h2>
+              <img src="img/godaddy.svg" alt="Payment Security" />
+              <img src="img/norton.svg" alt="Payment Security" />
+              <img src="img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy;
+              <a href="https://www.facebook.com/tran.huy.928441">Helmet Store</a
+              >. All Rights Reserved
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/slick/slick.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script>
+      function removeFromWishlist(productId) {
+        if (
+          confirm("Bạn có chắc muốn xóa sản phẩm này khỏi danh sách yêu thích?")
+        ) {
+          $.ajax({
+            url: "/wishlist/remove",
+            method: "POST",
+            data: {
+              idProduct: productId,
+            },
+            success: function (response) {
+              if (response.success) {
+                // Cập nhật wishlist count realtime
+                updateWishlistCount(-1);
+                location.reload();
+              } else {
+                alert(response.message);
+              }
+            },
+            error: function () {
+              alert("Lỗi khi xóa sản phẩm");
+            },
+          });
+        }
+      }
+
+      // Function cập nhật số lượng sản phẩm trong wishlist
+      function updateWishlistQuantity(productId, change) {
+        var qtyInput = document.getElementById("qty-" + productId);
+        if (!qtyInput) return;
+
+        var currentQty = parseInt(qtyInput.value) || 1;
+        var newQty = currentQty + change;
+
+        // If quantity goes to 0 or below, remove from wishlist
+        if (newQty <= 0) {
+          removeFromWishlist(productId);
+          return;
+        }
+
+        if (newQty > 99) newQty = 99;
+
+        qtyInput.value = newQty;
+
+        console.log(
+          `Updated quantity for product ${productId}: ${currentQty} -> ${newQty}`
+        );
+      }
+
+      // Event delegation cho quantity buttons
+      $(document).ready(function () {
+        // Unbind any existing events để tránh duplicate
+        $(document).off("click.wishlist mousedown.wishlist");
+
+        // Sử dụng namespace và specific selector cho wishlist buttons
+        $(document).on("click.wishlist", ".wishlist-btn", function (e) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          // Double-check để tránh multiple clicks
+          if ($(this).data("processing")) {
+            return false;
+          }
+
+          $(this).data("processing", true);
+
+          var productId = $(this).data("product-id");
+          var change = parseInt($(this).data("change"));
+
+          console.log(
+            `Wishlist button clicked: product ${productId}, change ${change}`
+          );
+
+          if (productId && change) {
+            updateWishlistQuantity(productId, change);
+          }
+
+          // Reset processing flag sau một khoảng thời gian ngắn
+          var button = $(this);
+          setTimeout(function () {
+            button.removeData("processing");
+          }, 300);
+
+          return false;
+        });
+
+        // Event handler cho remove from wishlist button
+        $(document).on("click", ".remove-from-wishlist", function (e) {
+          e.preventDefault();
+          var productId = $(this).data("product-id");
+          if (confirm("Bạn có chắc muốn xóa sản phẩm này khỏi danh sách yêu thích?")) {
+            removeFromWishlist(productId);
+          }
+        });
+
+        // Event handler cho move to cart button
+        // Loại bỏ event listener từ main.js để tránh conflict
+        $(document).off("click", ".move-to-cart");
+        
+        $(document).on("click", ".move-to-cart", function (e) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          
+          var productId = $(this).data("product-id");
+          if (!productId) {
+            alert("Không xác định được sản phẩm.");
+            return;
+          }
+          
+          addToCartFromWishlist(productId);
+        });
+
+        console.log("Wishlist quantity handlers initialized");
+      });
+
+      // Function thêm vào giỏ hàng từ wishlist
+      function addToCartFromWishlist(productId) {
+        var qtyInput = document.getElementById("qty-" + productId);
+        
+        // Default quantity = 1 nếu không tìm thấy input
+        var quantity = 1;
+        if (qtyInput) {
+          quantity = parseInt(qtyInput.value) || 1;
+        }
+        
+        // Validate số lượng
+        if (isNaN(quantity) || quantity < 1) {
+          quantity = 1;
+        }
+
+        console.log(`Adding to cart: productId=${productId}, quantity=${quantity}`);
+
+        $.ajax({
+          url: "/cart/add",
+          method: "POST",
+          data: {
+            idProduct: productId,
+            quantity: quantity,
+            size: "M", // default size
+          },
+          success: function (response) {
+            if (response.success) {
+              alert("Đã thêm " + quantity + " sản phẩm vào giỏ hàng!");
+              console.log("Add to cart successful:", response);
+              
+              // Xóa sản phẩm khỏi wishlist sau khi add to cart thành công
+              $.ajax({
+                url: "/wishlist/remove",
+                method: "POST",
+                data: {
+                  idProduct: productId,
+                },
+                success: function (removeResponse) {
+                  if (removeResponse.success) {
+                    updateWishlistCount(-1);
+                  }
+                  location.reload();
+                },
+                error: function () {
+                  location.reload();
+                },
+              });
+            } else {
+              alert(response.message || "Có lỗi xảy ra khi thêm vào giỏ hàng");
+            }
+          },
+          error: function (error) {
+            console.error("Add to cart error:", error);
+            alert("Lỗi khi thêm sản phẩm vào giỏ hàng");
+          },
+        });
+      }
+
+      // Function cập nhật wishlist count realtime
+      function updateWishlistCount(change) {
+        const wishlistCountElem = document.querySelector(".wishlist span");
+        if (wishlistCountElem) {
+          const currentCount = parseInt(
+            wishlistCountElem.textContent.match(/\d+/)[0]
+          );
+          const newCount = Math.max(0, currentCount + change);
+          wishlistCountElem.textContent = `(${newCount})`;
+        }
+      }
+
+      // Function cập nhật cart count realtime
+      function updateCartCount(change) {
+        const cartCountElem = document.querySelector(".cart span");
+        if (cartCountElem) {
+          const currentCount = parseInt(
+            cartCountElem.textContent.match(/\d+/)[0]
+          );
+          const newCount = Math.max(0, currentCount + change);
+          cartCountElem.textContent = `(${newCount})`;
+        }
+      }
+    </script>
+  </body>
+</html>

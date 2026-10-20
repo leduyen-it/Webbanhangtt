@@ -1,0 +1,82 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Quản lý người dùng</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+            <li class="breadcrumb-item active">Người dùng</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Danh sách người dùng</h3>
+            </div>
+            <div class="card-body">
+              <table id="usersTable" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Điện thoại</th>
+                    <th>Role</th>
+                    <th>Ngày tạo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% users.forEach(function(user) { %>
+                  <tr>
+                    <td><%= user.idUser %></td>
+                    <td><%= user.username %></td>
+                    <td><%= user.ho %> <%= user.ten %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phone %></td>
+                    <td>
+                      <% if (user.role === 'admin') { %>
+                      <span class="badge badge-danger">Admin</span>
+                      <% } else { %>
+                      <span class="badge badge-primary">Customer</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <%= new Date(user.created_at).toLocaleDateString('vi-VN')
+                      %>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  $(function () {
+    $("#usersTable").DataTable({
+      responsive: true,
+      lengthChange: false,
+      autoWidth: false,
+      order: [[0, "desc"]],
+    });
+  });
+</script>

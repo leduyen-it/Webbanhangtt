@@ -1,0 +1,47 @@
+<% for (product of listPro) { %>
+<div class="col-md-4">
+  <div class="product-item">
+    <div class="product-title">
+      <a class="slug" href="/san-pham/<%= slug(product.nameProduct) %>"
+        ><%=product.nameProduct%></a
+      >
+      <div class="ratting">
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>
+      </div>
+    </div>
+    <div class="product-image">
+      <a href="/san-pham/<%= slug(product.nameProduct) %>">
+        <img src="../<%=product.imgProduct%>" alt="Product Image" />
+      </a>
+      <div class="product-action" data-product-id="<%=product.idProduct%>">
+        <a href="#" class="add-to-cart" data-product-id="<%=product.idProduct%>"
+          ><i class="fa fa-cart-plus"></i
+        ></a>
+        <a
+          href="#"
+          class="add-to-wishlist"
+          data-product-id="<%=product.idProduct%>"
+          title="Yêu thích"
+          ><i class="<% if (typeof userWishlistIds !== 'undefined' && userWishlistIds && userWishlistIds.includes(product.idProduct)) { %>fas<% } else { %>far<% } %> fa-heart"></i
+        ></a>
+        <a class="slug" href="/san-pham/<%= slug(product.nameProduct) %>"
+          ><i class="fa fa-search"></i
+        ></a>
+      </div>
+    </div>
+    <div class="product-price">
+      <h3><%=product.priceProduct.toLocaleString('vi-VN')%><span> ₫</span></h3>
+      <a
+        class="btn add-to-cart"
+        href="#"
+        data-product-id="<%=product.idProduct%>"
+        ><i class="fa fa-shopping-cart"></i>Mua Ngay</a
+      >
+    </div>
+  </div>
+</div>
+<% } %>

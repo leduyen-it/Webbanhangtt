@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xác thực mã OTP - Helmet Store</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/premium.css" rel="stylesheet" />
+    <style>
+      .recovery-card { max-width: 520px; margin: 55px auto; padding: 32px; background: #fff; box-shadow: 0 8px 28px rgba(0,0,0,.08); border-radius: 8px; }
+      .recovery-card h1 { font-size: 1.7rem; margin-bottom: 12px; }
+      .otp-input { width: 48px; height: 56px; text-align: center; font-size: 1.4rem; font-weight: 700; padding: .25rem; }
+      .otp-slots { display: flex; justify-content: center; gap: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="/" class="navbar-brand">Helmet Store</a>
+          <div class="navbar-nav ml-auto"><a href="/users/dang-nhap" class="nav-item nav-link">Đăng nhập</a></div>
+        </nav>
+      </div>
+    </div>
+    <main class="container">
+      <section class="recovery-card">
+        <h1 class="text-center">Xác thực mã OTP</h1>
+        <p class="text-muted text-center">Nhập mã 6 chữ số đã gửi đến <strong><%= maskedEmail %></strong>. Mã có hiệu lực trong 5 phút.</p>
+        <% if (message) { %>
+          <div class="alert alert-<%= messageType === 'success' ? 'success' : 'warning' %>" role="alert"><%= message %></div>
+        <% } %>
+        <form id="otpForm" action="/users/xac-thuc-otp" method="post">
+          <input type="hidden" name="otp" id="otpValue" />
+          <div class="otp-slots mb-4" role="group" aria-label="Mã OTP gồm 6 chữ số">
+            <% for (let digit = 0; digit < 6; digit++) { %>
+              <input class="form-control otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Chữ số OTP <%= digit + 1 %>" autocomplete="<%= digit === 0 ? 'one-time-code' : 'off' %>" />
+            <% } %>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Xác nhận OTP</button>
+        </form>
+        <form class="text-center mt-3" action="/users/gui-lai-otp" method="post">
+          <button id="resendButton" class="btn btn-link" type="submit">Gửi lại mã OTP</button>
+          <div id="resendCountdown" class="small text-muted" aria-live="polite"></div>
+        </form>
+        <p class="text-center mt-2 mb-0"><a href="/users/quen-mat-khau">Thay đổi email</a></p>
+      </section>
+    </main>
+    <script>
+      (function () {
+        var inputs = Array.prototype.slice.call(document.querySelectorAll(".otp-input"));
+        var otpValue = document.getElementById("otpValue");
+        var form = document.getElementById("otpForm");
+
+        function setDigits(value) {
+          var digits = value.replace(/\D/g, "").slice(0, 6);
+          inputs.forEach(function (input, index) {
+            input.value = digits[index] || "";
+          });
+          otpValue.value = digits;
+          var next = Math.min(digits.length, inputs.length - 1);
+          inputs[next].focus();
+        }
+
+        inputs.forEach(function (input, index) {
+          input.addEventListener("input", function () {
+            var digits = input.value.replace(/\D/g, "");
+            if (digits.length > 1) {
+              setDigits(digits);
+              return;
+            }
+            input.value = digits;
+            if (digits && index < inputs.length - 1) inputs[index + 1].focus();
+            otpValue.value = inputs.map(function (slot) { return slot.value; }).join("");
+          });
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Backspace" && !input.value && index > 0) inputs[index - 1].focus();
+            if (event.key === "ArrowLeft" && index > 0) inputs[index - 1].focus();
+            if (event.key === "ArrowRight" && index < inputs.length - 1) inputs[index + 1].focus();
+          });
+          input.addEventListener("paste", function (event) {
+            var pasted = (event.clipboardData || window.clipboardData).getData("text");
+            if (/\d{6}/.test(pasted)) {
+              event.preventDefault();
+              setDigits(pasted);
+            }
+          });
+        });
+
+        form.addEventListener("submit", function (event) {
+          otpValue.value = inputs.map(function (slot) { return slot.value; }).join("");
+          if (!/^\d{6}$/.test(otpValue.value)) {
+            event.preventDefault();
+            inputs[0].focus();
+          }
+        });
+
+        var remaining = <%= resendAfterSeconds %>;
+        var resendButton = document.getElementById("resendButton");
+        var countdown = document.getElementById("resendCountdown");
+        function tick() {
+          resendButton.disabled = remaining > 0;
+          countdown.textContent = remaining > 0 ? "Bạn có thể gửi lại mã sau " + remaining + " giây." : "";
+          if (remaining > 0) {
+            remaining -= 1;
+            window.setTimeout(tick, 1000);
+          }
+        }
+        tick();
+        inputs[0].focus();
+      })();
+    </script>
+  </body>
+</html>

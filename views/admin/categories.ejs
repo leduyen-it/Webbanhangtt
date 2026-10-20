@@ -1,0 +1,136 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Quản lý danh mục</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+            <li class="breadcrumb-item active">Danh mục</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Danh sách danh mục</h3>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tên danh mục</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% categories.forEach(function(category) { %>
+                  <tr>
+                    <td><%= category.idCat %></td>
+                    <td><%= category.nameCat %></td>
+                    <td>
+                      <button
+                        class="btn btn-info btn-sm edit-category-btn"
+                        data-id="<%= category.idCat %>"
+                        data-name="<%= category.nameCat %>"
+                        onclick="editCategory('<%= category.idCat %>', '<%= category.nameCat %>')"
+                      >
+                        <i class="fas fa-edit"></i> Sửa
+                      </button>
+                      <form
+                        method="post"
+                        action="/admin/categories/delete/<%= category.idCat %>"
+                        style="display: inline"
+                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')"
+                      >
+                      
+                        <button type="submit" class="btn btn-danger btn-sm">
+                          <i class="fas fa-trash"></i> Xóa
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title" id="form-title">Thêm danh mục mới</h3>
+            </div>
+            <form
+              method="post"
+              action="/admin/categories/add"
+              id="categoryForm"
+            >
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="category_name">Tên danh mục</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="category_name"
+                    name="category_name"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                  Thêm danh mục
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-default"
+                  onclick="resetForm()"
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  let isEditing = false;
+  let editingId = null;
+
+  function editCategory(id, name) {
+    isEditing = true;
+    editingId = id;
+    document.getElementById("form-title").textContent = "Sửa danh mục";
+    document.getElementById("category_name").value = name;
+    document.getElementById("submit-btn").textContent = "Cập nhật";
+    document.getElementById("categoryForm").action =
+      "/admin/categories/edit/" + id;
+  }
+
+  function resetForm() {
+    isEditing = false;
+    editingId = null;
+    document.getElementById("form-title").textContent = "Thêm danh mục mới";
+    document.getElementById("category_name").value = "";
+    document.getElementById("submit-btn").textContent = "Thêm danh mục";
+    document.getElementById("categoryForm").action = "/admin/categories/add";
+  }
+</script>

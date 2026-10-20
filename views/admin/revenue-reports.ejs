@@ -1,0 +1,245 @@
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-8">
+          <h1 class="m-0">Thống kê &amp; Báo cáo doanh thu</h1>
+        </div>
+        <div class="col-sm-4">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+            <li class="breadcrumb-item active">Báo cáo doanh thu</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="info-box">
+            <span class="info-box-icon bg-info"><i class="fas fa-receipt"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Tổng tiền đơn hàng</span>
+              <span class="info-box-number"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(report.summary.grossAmount) %></span>
+              <small><%= report.summary.orderCount.toLocaleString('vi-VN') %> đơn trong kỳ</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="info-box">
+            <span class="info-box-icon bg-success"><i class="fas fa-hand-holding-usd"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Doanh thu được ghi nhận</span>
+              <span class="info-box-number"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(report.summary.recognizedRevenue) %></span>
+              <small>Theo trạng thái thanh toán/đơn hàng hiện có</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-outline card-primary">
+        <div class="card-header">
+          <h3 class="card-title"><i class="fas fa-filter mr-1"></i> Bộ lọc báo cáo</h3>
+        </div>
+        <form id="revenueReportFilters" method="get" action="/admin/revenue-reports">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="startDate">Ngày bắt đầu</label>
+                  <input class="form-control" type="date" id="startDate" name="startDate" value="<%= report.selection.startDate %>">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="endDate">Ngày kết thúc</label>
+                  <input class="form-control" type="date" id="endDate" name="endDate" value="<%= report.selection.endDate %>">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="month">Tháng</label>
+                  <select class="form-control" id="month" name="month">
+                    <option value="">Chọn tháng</option>
+                    <% for (let month = 1; month <= 12; month++) { %>
+                      <option value="<%= month %>" <%= String(report.selection.month) === String(month) ? 'selected' : '' %>>Tháng <%= month %></option>
+                    <% } %>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="year">Năm</label>
+                  <input class="form-control" type="number" id="year" name="year" min="1900" max="2100" value="<%= report.selection.year %>" placeholder="VD: 2026">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="view">Chi tiết theo</label>
+                  <select class="form-control" id="view" name="view">
+                    <option value="order" <%= report.view === 'order' ? 'selected' : '' %>>Đơn hàng</option>
+                    <option value="day" <%= report.view === 'day' ? 'selected' : '' %>>Ngày</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="status">Trạng thái đơn</label>
+                  <select class="form-control" id="status" name="status">
+                    <option value="">Tất cả trạng thái</option>
+                    <% report.statuses.forEach(function(status) { %>
+                      <option value="<%= status %>" <%= report.filters.status === status ? 'selected' : '' %>><%= status %></option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="paymentMethod">Phương thức thanh toán</label>
+                  <select class="form-control" id="paymentMethod" name="paymentMethod">
+                    <option value="">Tất cả phương thức</option>
+                    <% report.paymentMethods.forEach(function(method) { %>
+                      <option value="<%= method %>" <%= report.filters.paymentMethod === method ? 'selected' : '' %>><%= method %></option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12"><hr><strong>So sánh với khoảng thời gian</strong></div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="compareStartDate">Ngày bắt đầu kỳ so sánh</label>
+                  <input class="form-control" type="date" id="compareStartDate" name="compareStartDate" value="<%= report.selection.compareStartDate %>">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="compareEndDate">Ngày kết thúc kỳ so sánh</label>
+                  <input class="form-control" type="date" id="compareEndDate" name="compareEndDate" value="<%= report.selection.compareEndDate %>">
+                </div>
+              </div>
+              <div class="col-md-6 d-flex align-items-center">
+                <small class="text-muted">Kỳ so sánh dùng cùng bộ lọc trạng thái và phương thức thanh toán với kỳ báo cáo.</small>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search mr-1"></i> Xem báo cáo</button>
+          </div>
+        </form>
+      </div>
+
+      <% if (report.comparison) { %>
+        <div class="card card-outline card-info">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-exchange-alt mr-1"></i> So sánh doanh thu được ghi nhận</h3>
+          </div>
+          <div class="card-body">
+            <% const differenceClass = report.comparison.difference > 0 ? 'text-success' : report.comparison.difference < 0 ? 'text-danger' : ''; %>
+            <p class="mb-1">Kỳ hiện tại: <strong><%= report.period.startValue %> – <%= report.period.endValue %></strong> —
+              <strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(report.summary.recognizedRevenue) %></strong>
+              (<%= report.summary.orderCount.toLocaleString('vi-VN') %> đơn)</p>
+            <p class="mb-1">Kỳ so sánh: <strong><%= report.comparePeriod.startValue %> – <%= report.comparePeriod.endValue %></strong> —
+              <strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(report.comparison.recognizedRevenue) %></strong>
+              (<%= report.comparison.orderCount.toLocaleString('vi-VN') %> đơn)</p>
+            <p class="mb-0">Chênh lệch: <strong class="<%= differenceClass %>"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(report.comparison.difference) %></strong>
+              <% if (report.comparison.percentage === null) { %>
+                <span class="text-muted">(không tính tỷ lệ phần trăm khi kỳ so sánh bằng 0)</span>
+              <% } else { %>
+                <strong class="<%= differenceClass %>">(<%= report.comparison.percentage > 0 ? '+' : '' %><%= report.comparison.percentage.toLocaleString('vi-VN', { maximumFractionDigits: 2 }) %>%)</strong>
+              <% } %>
+            </p>
+          </div>
+        </div>
+      <% } %>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i class="fas fa-table mr-1"></i> Chi tiết báo cáo — <%= report.view === 'day' ? 'theo ngày' : 'theo đơn hàng' %></h3>
+        </div>
+        <div class="card-body table-responsive">
+          <table id="revenueReportTable" class="table table-bordered table-striped">
+            <thead>
+              <% if (report.view === 'day') { %>
+                <tr><th>Ngày</th><th>Số đơn</th><th>Tổng tiền đơn hàng</th><th>Doanh thu ghi nhận</th></tr>
+              <% } else { %>
+                <tr>
+                  <th>Mã đơn</th><th>Ngày đặt</th><th>Trạng thái đơn</th><th>Phương thức</th>
+                  <th>Tổng tiền đơn hàng</th><th>Doanh thu ghi nhận</th>
+                </tr>
+              <% } %>
+            </thead>
+            <tbody>
+              <% if (report.rows.length) { %>
+                <% report.rows.forEach(function(row) { %>
+                  <% if (report.view === 'day') { %>
+                    <tr>
+                      <td><%= row.reportDate %></td>
+                      <td><%= Number(row.orderCount).toLocaleString('vi-VN') %></td>
+                      <td data-order="<%= row.grossAmount %>"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(row.grossAmount) %></td>
+                      <td data-order="<%= row.recognizedRevenue %>"><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(row.recognizedRevenue) %></strong></td>
+                    </tr>
+                  <% } else { %>
+                    <tr>
+                      <td data-order="<%= row.idOrder %>"><a href="/admin/orders/<%= row.idOrder %>">#<%= row.idOrder %></a></td>
+                      <td data-order="<%= new Date(row.createdAt).getTime() %>"><%= new Date(row.createdAt).toLocaleString('vi-VN') %></td>
+                      <td><%= row.status || '—' %></td>
+                      <td><%= row.paymentMethod || '—' %></td>
+                      <td data-order="<%= row.totalAmount %>"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(row.totalAmount) %></td>
+                      <td data-order="<%= row.recognizedRevenue %>"><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(row.recognizedRevenue) %></strong></td>
+                    </tr>
+                  <% } %>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  (function () {
+    var startDate = document.getElementById("startDate");
+    var endDate = document.getElementById("endDate");
+    var month = document.getElementById("month");
+    var year = document.getElementById("year");
+
+    function clearCalendarPeriod() {
+      month.value = "";
+      year.value = "";
+    }
+    function clearDateRange() {
+      startDate.value = "";
+      endDate.value = "";
+    }
+
+    startDate.addEventListener("change", clearCalendarPeriod);
+    endDate.addEventListener("change", clearCalendarPeriod);
+    month.addEventListener("change", clearDateRange);
+    year.addEventListener("input", clearDateRange);
+  })();
+
+  $(function () {
+    var tableOptions = {
+      responsive: true,
+      lengthChange: true,
+      pageLength: 25,
+      autoWidth: false,
+      order: [[0, "desc"]],
+      language: {
+        search: "Tìm kiếm:",
+        lengthMenu: "Hiển thị _MENU_ dòng",
+        info: "Hiển thị _START_–_END_ / _TOTAL_ dòng",
+        infoEmpty: "Không có dữ liệu",
+        emptyTable: "Không có đơn hàng trong bộ lọc đã chọn",
+        zeroRecords: "Không tìm thấy kết quả phù hợp",
+        paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" }
+      }
+    };
+    $("#revenueReportTable").DataTable(tableOptions);
+  });
+</script>

@@ -1,0 +1,2 @@
+ALTER TABLE `orders`
+MODIFY COLUMN `totalAmount` DECIMAL(12,2) NOT NULL;

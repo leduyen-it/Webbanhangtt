@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tài Khoản - Helmet Store</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/favicon.ico" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="../lib/slick/slick.css" rel="stylesheet" />
+    <link href="../lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/premium.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i> leduyenltbn@gmail.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i> +01234567890
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="/" class="nav-item nav-link">Trang Chủ</a>
+              <a href="/san-pham" class="nav-item nav-link">Sản Phẩm</a>
+              <!-- <a href="product-detail.html" class="nav-item nav-link">Product Detail</a> -->
+              <a href="/cart" class="nav-item nav-link">Giỏ Hàng</a>
+              <a href="/thanh-toan" class="nav-item nav-link">Thanh Toán</a>
+              <a href="/users/tai-khoan" class="nav-item nav-link active"
+                >Tài khoản của bạn</a
+              >
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Trang khác</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/wishlist" class="dropdown-item"
+                    >Sản phẩm đã thích</a
+                  >
+                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
+                </div>
+              </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <% if (user) { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  ><i class="fa fa-user" aria-hidden="true"></i>
+                  <%= user.username %></a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/tai-khoan" class="dropdown-item"
+                    >Tài khoản của tôi</a
+                  >
+                  <a href="/orders" class="dropdown-item">Đơn hàng</a>
+                  <a href="/users/dang-xuat" class="dropdown-item">Đăng xuất</a>
+                </div>
+              </div>
+              <% } else { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  ><i class="fa fa-user" aria-hidden="true"></i> Tài khoản</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                  <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="/">
+                <img src="../img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(<%= wishlistCount || 0 %>)</span>
+              </a>
+              <a href="/cart" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(<%= cartCount || 0 %>)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+          <li class="breadcrumb-item active">Tài khoản</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- My Account Start -->
+    <div class="my-account">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            <div
+              class="nav flex-column nav-pills"
+              role="tablist"
+              aria-orientation="vertical"
+            >
+              <a
+                class="nav-link<% if (!(typeof passwordMessage !== 'undefined' && passwordMessage) && !(typeof accountMessage !== 'undefined' && accountMessage)) { %> active<% } %>"
+                id="dashboard-nav"
+                data-toggle="pill"
+                href="#dashboard-tab"
+                role="tab"
+                ><i class="fa fa-tachometer-alt"></i>Chào <%= user.ten %></a
+              >
+              <a
+                class="nav-link"
+                id="orders-nav"
+                data-toggle="pill"
+                href="#orders-tab"
+                role="tab"
+                ><i class="fa fa-shopping-bag"></i>Đơn Hàng</a
+              >
+              <a
+                class="nav-link"
+                id="payment-nav"
+                data-toggle="pill"
+                href="#payment-tab"
+                role="tab"
+                ><i class="fa fa-credit-card"></i>Phương Thức Thanh Toán</a
+              >
+              <a
+                class="nav-link"
+                id="address-nav"
+                data-toggle="pill"
+                href="#address-tab"
+                role="tab"
+                ><i class="fa fa-map-marker-alt"></i>Địa Chỉ Nhận Hàng</a
+              >
+              <a
+                class="nav-link<% if ((typeof passwordMessage !== 'undefined' && passwordMessage) || (typeof accountMessage !== 'undefined' && accountMessage)) { %> active<% } %>"
+                id="account-nav"
+                data-toggle="pill"
+                href="#account-tab"
+                role="tab"
+                ><i class="fa fa-user"></i>Chi Tiết Tài Khoản</a
+              >
+              <a class="nav-link" href="/users/dang-xuat"
+                ><i class="fa fa-sign-out-alt"></i>Đăng Xuất</a
+              >
+            </div>
+          </div>
+          <div class="col-md-9">
+            <% if (typeof accountMessage !== 'undefined' && accountMessage) { %>
+            <div
+              class="alert <%= accountStatus === 'success' ? 'alert-success' : 'alert-danger' %>"
+              role="status"
+              aria-live="polite"
+            ><%= accountMessage %></div>
+            <% } %>
+            <div class="tab-content">
+              <div
+                class="tab-pane fade<% if (!(typeof passwordMessage !== 'undefined' && passwordMessage) && !(typeof accountMessage !== 'undefined' && accountMessage)) { %> show active<% } %>"
+                id="dashboard-tab"
+                role="tabpanel"
+                aria-labelledby="dashboard-nav"
+              >
+                <h4>Chào <%= user.ten %></h4>
+                <p>Đây là trang quản lý tài khoản của bạn.</p>
+              </div>
+              <div
+                class="tab-pane fade"
+                id="orders-tab"
+                role="tabpanel"
+                aria-labelledby="orders-nav"
+              >
+                <h4>Lịch Sử Đơn Hàng</h4>
+
+                <% if (typeof orders !== 'undefined' && orders.length > 0) { %>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>Mã ĐH</th>
+                        <th>Sản Phẩm</th>
+                        <th>Ngày Đặt</th>
+                        <th>Tổng Tiền</th>
+                        <th>Trạng Thái</th>
+                        <th>Thanh Toán</th>
+                        <th>Hành Động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for (let order of orders) { %>
+                      <tr>
+                        <td>#<%= order.idOrder %></td>
+                        <td>
+                          <small
+                            ><%= order.productNames ? (order.productNames.substring(0, 50) + (order.productNames.length > 50 ? '...' : '')) : 'N/A' %></small
+                          >
+                          <br />
+                          <small class="text-muted"
+                            >(<%= order.itemCount %> sản phẩm)</small
+                          >
+                        </td>
+                        <td>
+                          <%= new Date(order.createdAt).toLocaleDateString('vi-VN') %>
+                        </td>
+                        <td>
+                          <strong
+                            ><%= order.totalAmount.toLocaleString('vi-VN') %>đ</strong
+                          >
+                        </td>
+                        <td>
+                          <% if (order.status === 'pending') { %>
+                          <span class="badge badge-warning">Chờ xác nhận</span>
+                          <% } else if (order.status === 'confirmed') { %>
+                          <span class="badge badge-info">Đã xác nhận</span>
+                          <% } else if (order.status === 'preparing') { %>
+                          <span class="badge badge-primary">Đang chuẩn bị</span>
+                          <% } else if (order.status === 'shipping') { %>
+                          <span class="badge badge-secondary">Đang giao</span>
+                          <% } else if (order.status === 'delivered') { %>
+                          <span class="badge badge-success">Đã giao</span>
+                          <% } else if (order.status === 'cancelled') { %>
+                          <span class="badge badge-danger">Đã hủy</span>
+                          <% } else { %>
+                          <span class="badge badge-light"
+                            ><%= order.status %></span
+                          >
+                          <% } %>
+                        </td>
+                        <td>
+                          <% if (order.paymentMethod === 'COD') { %>
+                          <small class="text-info">💵 COD</small>
+                          <br />
+                          <% if (order.paymentStatus === 'paid') { %>
+                          <span class="badge badge-success">Đã thanh toán</span>
+                          <% } else { %>
+                          <span class="badge badge-warning"
+                            >Chưa thanh toán</span
+                          >
+                          <% } %> <% } else { %>
+                          <span class="badge badge-secondary"
+                            ><%= order.paymentMethod %></span
+                          >
+                          <% } %>
+                        </td>
+                        <td>
+                          <button
+                            class="btn btn-sm btn-outline-primary mb-1 view-order-btn"
+                            data-order-id='<%= order.idOrder %>'
+                          >
+                            <i class="fa fa-eye"></i> Xem
+                          </button>
+                          <% if (['pending','confirmed'].includes(order.status))
+                          { %>
+                          <br />
+                          <button
+                            class="btn btn-sm btn-outline-danger cancel-order-btn"
+                            data-order-id='<%= order.idOrder %>'
+                          >
+                            <i class="fa fa-times"></i> Hủy
+                          </button>
+                          <% } %>
+                        </td>
+                      </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+                <% } else { %>
+                <div class="card">
+                  <div class="card-body text-center">
+                    <i class="fa fa-shopping-bag fa-3x text-muted mb-3"></i>
+                    <h5>Chưa có đơn hàng nào</h5>
+                    <p class="text-muted">
+                      Bạn chưa đặt đơn hàng nào. Hãy khám phá các sản phẩm tuyệt
+                      vời của chúng tôi!
+                    </p>
+                    <a href="/san-pham" class="btn btn-primary">
+                      <i class="fa fa-shopping-cart"></i> Mua Sắm Ngay
+                    </a>
+                  </div>
+                </div>
+                <% } %>
+              </div>
+              <div
+                class="tab-pane fade"
+                id="payment-tab"
+                role="tabpanel"
+                aria-labelledby="payment-nav"
+              >
+                <h4>Payment Method</h4>
+                <p>Tính năng đang phát triển...</p>
+              </div>
+              <div
+                class="tab-pane fade"
+                id="address-tab"
+                role="tabpanel"
+                aria-labelledby="address-nav"
+              >
+                <h4>Địa Chỉ Nhận Hàng</h4>
+
+                <!-- Hiển thị thông báo nếu có -->
+                <% if (typeof message !== 'undefined' && message) { %>
+                <div class="alert alert-info"><%= message %></div>
+                <% } %>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-3"
+                    >
+                      <h5>Danh Sách Địa Chỉ</h5>
+                      <button
+                        class="btn btn-primary"
+                        data-toggle="modal"
+                        data-target="#editAddressModal"
+                      >
+                        <i class="fa fa-plus"></i> Thêm Địa Chỉ Mới
+                      </button>
+                    </div>
+
+                    <!-- Danh sách địa chỉ -->
+                    <% if (typeof addresses !== 'undefined' && addresses.length > 0) { %> <% for (let address of addresses) { %>
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-8">
+                            <h6>
+                              <strong><%= address.fullName %></strong>
+                              <% if (address.isDefault) { %>
+                              <span class="badge badge-success">Mặc định</span>
+                              <% } %>
+                              <span class="badge badge-secondary"
+                                ><%= address.addressType === 'home' ? 'Nhà riêng' : address.addressType === 'office' ? 'Cơ quan' : 'Khác' %></span
+                              >
+                            </h6>
+                            <p class="mb-1">
+                              <strong>SĐT:</strong> <%= address.phone %>
+                            </p>
+                            <p class="mb-1">
+                              <strong>Địa chỉ:</strong>
+                              <%= address.detailAddress %>, <%= address.ward %>,
+                              <%= address.district %>, <%= address.province %>
+                            </p>
+                            <small class="text-muted">
+                              Được tạo: <%= new Date(address.createdAt).toLocaleDateString('vi-VN') %>
+                            </small>
+                          </div>
+                          <div class="col-md-4 text-right">
+                            <% if (!address.isDefault) { %>
+                            <button
+                              class="btn btn-sm btn-outline-primary mb-2 set-default-address-btn"
+                              data-address-id='<%= address.idAddress %>'
+                            >
+                              Đặt làm mặc định
+                            </button>
+                            <% } %>
+                            <br />
+                            <button
+                              class="btn btn-sm btn-outline-info mr-2"
+                              onclick="editAddress('<%= address.idAddress %>', `<%= address.fullName %>`, `<%= address.phone %>`, `<%= address.province %>`, `<%= address.district %>`, `<%= address.ward %>`, `<%= address.detailAddress %>`)"
+                            >
+                              <i class="fa fa-edit"></i> Sửa
+                            </button>
+                            <button
+                              class="btn btn-sm btn-outline-danger delete-address-btn"
+                              data-address-id='<%= address.idAddress %>'
+                            >
+                              <i class="fa fa-trash"></i> Xóa
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <% } %> <% } else { %>
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <p class="mb-0">Chưa có địa chỉ nào được lưu</p>
+                        <button
+                          class="btn btn-primary mt-2"
+                          data-toggle="modal"
+                          data-target="#editAddressModal"
+                        >
+                          Thêm Địa Chỉ Đầu Tiên
+                        </button>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+
+                <!-- Modal Edit Address -->
+                <div
+                  class="modal fade"
+                  id="editAddressModal"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="editAddressModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editAddressModalLabel">
+                          Chỉnh Sửa Địa Chỉ Nhận Hàng
+                        </h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <form action="/users/update-address" method="post">
+                        <div class="modal-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <label for="fullName">Họ và Tên</label>
+                              <input
+                                id="fullName"
+                                name="fullName"
+                                value="<%= user.ho %> <%= user.ten %>"
+                                class="form-control"
+                                type="text"
+                                placeholder="Họ và tên người nhận"
+                                required
+                              />
+                            </div>
+                            <div class="col-md-6">
+                              <label for="phone">Số Điện Thoại</label>
+                              <input
+                                id="phone"
+                                name="phone"
+                                value="<%= user.phone || '' %>"
+                                class="form-control"
+                                type="tel"
+                                placeholder="Số điện thoại"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-4">
+                              <label for="province">Tỉnh/Thành Phố</label>
+                              <select
+                                id="province"
+                                name="province"
+                                class="form-control"
+                                required
+                              >
+                                <option value="">Chọn Tỉnh/Thành phố</option>
+                                <option value="Hà Nội">Hà Nội</option>
+                                <option value="TP. Hồ Chí Minh">
+                                  TP. Hồ Chí Minh
+                                </option>
+                                <option value="Đà Nẵng">Đà Nẵng</option>
+                                <option value="Hải Phòng">Hải Phòng</option>
+                                <option value="Cần Thơ">Cần Thơ</option>
+                                <option value="An Giang">An Giang</option>
+                                <option value="Bà Rịa - Vũng Tàu">
+                                  Bà Rịa - Vũng Tàu
+                                </option>
+                                <option value="Bắc Giang">Bắc Giang</option>
+                                <option value="Bắc Kạn">Bắc Kạn</option>
+                                <option value="Bạc Liêu">Bạc Liêu</option>
+                                <option value="Bắc Ninh">Bắc Ninh</option>
+                                <option value="Bến Tre">Bến Tre</option>
+                                <option value="Bình Định">Bình Định</option>
+                                <option value="Bình Dương">Bình Dương</option>
+                                <option value="Bình Phước">Bình Phước</option>
+                                <option value="Bình Thuận">Bình Thuận</option>
+                                <option value="Cà Mau">Cà Mau</option>
+                                <option value="Cao Bằng">Cao Bằng</option>
+                                <option value="Đắk Lắk">Đắk Lắk</option>
+                                <option value="Đắk Nông">Đắk Nông</option>
+                                <option value="Điện Biên">Điện Biên</option>
+                                <option value="Đồng Nai">Đồng Nai</option>
+                                <option value="Đồng Tháp">Đồng Tháp</option>
+                                <option value="Gia Lai">Gia Lai</option>
+                                <option value="Hà Giang">Hà Giang</option>
+                                <option value="Hà Nam">Hà Nam</option>
+                                <option value="Hà Tĩnh">Hà Tĩnh</option>
+                                <option value="Hải Dương">Hải Dương</option>
+                                <option value="Hậu Giang">Hậu Giang</option>
+                                <option value="Hòa Bình">Hòa Bình</option>
+                                <option value="Hưng Yên">Hưng Yên</option>
+                                <option value="Khánh Hòa">Khánh Hòa</option>
+                                <option value="Kiên Giang">Kiên Giang</option>
+                                <option value="Kon Tum">Kon Tum</option>
+                                <option value="Lai Châu">Lai Châu</option>
+                                <option value="Lâm Đồng">Lâm Đồng</option>
+                                <option value="Lạng Sơn">Lạng Sơn</option>
+                                <option value="Lào Cai">Lào Cai</option>
+                                <option value="Long An">Long An</option>
+                                <option value="Nam Định">Nam Định</option>
+                                <option value="Nghệ An">Nghệ An</option>
+                                <option value="Ninh Bình">Ninh Bình</option>
+                                <option value="Ninh Thuận">Ninh Thuận</option>
+                                <option value="Phú Thọ">Phú Thọ</option>
+                                <option value="Phú Yên">Phú Yên</option>
+                                <option value="Quảng Bình">Quảng Bình</option>
+                                <option value="Quảng Nam">Quảng Nam</option>
+                                <option value="Quảng Ngãi">Quảng Ngãi</option>
+                                <option value="Quảng Ninh">Quảng Ninh</option>
+                                <option value="Quảng Trị">Quảng Trị</option>
+                                <option value="Sóc Trăng">Sóc Trăng</option>
+                                <option value="Sơn La">Sơn La</option>
+                                <option value="Tây Ninh">Tây Ninh</option>
+                                <option value="Thái Bình">Thái Bình</option>
+                                <option value="Thái Nguyên">Thái Nguyên</option>
+                                <option value="Thanh Hóa">Thanh Hóa</option>
+                                <option value="Thừa Thiên Huế">
+                                  Thừa Thiên Huế
+                                </option>
+                                <option value="Tiền Giang">Tiền Giang</option>
+                                <option value="Trà Vinh">Trà Vinh</option>
+                                <option value="Tuyên Quang">Tuyên Quang</option>
+                                <option value="Vĩnh Long">Vĩnh Long</option>
+                                <option value="Vĩnh Phúc">Vĩnh Phúc</option>
+                                <option value="Yên Bái">Yên Bái</option>
+                              </select>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="district">Quận/Huyện</label>
+                              <input
+                                id="district"
+                                name="district"
+                                class="form-control"
+                                type="text"
+                                placeholder="Quận/Huyện"
+                                required
+                              />
+                            </div>
+                            <div class="col-md-4">
+                              <label for="ward">Phường/Xã</label>
+                              <input
+                                id="ward"
+                                name="ward"
+                                class="form-control"
+                                type="text"
+                                placeholder="Phường/Xã"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <label for="detailAddress"
+                                >Địa Chỉ Chi Tiết</label
+                              >
+                              <textarea
+                                id="detailAddress"
+                                name="detailAddress"
+                                class="form-control"
+                                rows="3"
+                                placeholder="Số nhà, tên đường..."
+                                required
+                              >
+<%= user.address || '' %></textarea
+                              >
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <label for="addressType">Loại Địa Chỉ</label>
+                              <select
+                                id="addressType"
+                                name="addressType"
+                                class="form-control"
+                              >
+                                <option value="home">Nhà riêng</option>
+                                <option value="office">Cơ quan</option>
+                                <option value="other">Khác</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  value="1"
+                                  id="setAsDefault"
+                                  name="setAsDefault"
+                                  checked
+                                />
+                                <label
+                                  class="form-check-label"
+                                  for="setAsDefault"
+                                >
+                                  Đặt làm địa chỉ mặc định
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal"
+                          >
+                            Hủy
+                          </button>
+                          <button type="submit" class="btn btn-primary">
+                            Lưu Thay Đổi
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="tab-pane fade<% if ((typeof passwordMessage !== 'undefined' && passwordMessage) || (typeof accountMessage !== 'undefined' && accountMessage)) { %> show active<% } %>"
+                id="account-tab"
+                role="tabpanel"
+                aria-labelledby="account-nav"
+              >
+                <h4>Chi Tiết Tài Khoản</h4>
+                <form action="/users/update" method="post">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label for="ho">Họ</label>
+                      <input
+                        id="ho"
+                        name="ho"
+                        value="<%= user.ho %>"
+                        class="form-control"
+                        type="text"
+                        placeholder="Họ"
+                        maxlength="50"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="ten">Tên</label>
+                      <input
+                        id="ten"
+                        name="ten"
+                        value="<%= user.ten %>"
+                        class="form-control"
+                        type="text"
+                        placeholder="Tên"
+                        maxlength="50"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="phone">Số điện thoại</label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        value="<%= user.phone %>"
+                        class="form-control"
+                        type="tel"
+                        placeholder="Số Điện Thoại"
+                        pattern="[0-9]{10,11}"
+                        maxlength="11"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="email">Email</label>
+                      <input
+                        id="email"
+                        name="email"
+                        value="<%= user.email %>"
+                        class="form-control"
+                        type="email"
+                        placeholder="Email"
+                        maxlength="50"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-12">
+                      <label for="address">Địa chỉ</label>
+                      <input
+                        name="address"
+                        value="<%= user.address %>"
+                        class="form-control"
+                        type="text"
+                        placeholder="Địa Chỉ"
+                        maxlength="500"
+                      />
+                    </div>
+                    <div class="col-md-12">
+                      <button class="btn">Cập Nhật Tài Khoản</button>
+                      <br /><br />
+                    </div>
+                  </div>
+                </form>
+                <h4>Đổi Mật Khẩu</h4>
+                <form id="change-password-form" action="/users/doi-mat-khau" method="post">
+                  <div class="row">
+                    <% if (typeof passwordMessage !== 'undefined' && passwordMessage) { %>
+                    <div class="col-md-12">
+                      <div
+                        class="alert <%= typeof passwordStatus !== 'undefined' && passwordStatus === 'success' ? 'alert-success' : 'alert-danger' %>"
+                        role="status"
+                        aria-live="polite"
+                      ><%= passwordMessage %></div>
+                    </div>
+                    <% } %>
+                    <div class="col-md-12">
+                      <div class="password-field">
+                        <input
+                          id="current-password"
+                          name="password"
+                          class="form-control"
+                          type="password"
+                          placeholder="Mật khẩu hiện tại"
+                          autocomplete="current-password"
+                          required
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="current-password"
+                          data-show-label="Hiện mật khẩu hiện tại"
+                          aria-label="Hiện mật khẩu hiện tại"
+                          aria-pressed="false"
+                        ><i class="fa fa-eye-slash" aria-hidden="true"></i></button>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="password-field">
+                        <input
+                          id="new-password"
+                          name="newPassword"
+                          class="form-control"
+                          type="password"
+                          placeholder="Mật khẩu mới"
+                          autocomplete="new-password"
+                          minlength="6"
+                          aria-describedby="new-password-feedback"
+                          required
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="new-password"
+                          data-show-label="Hiện mật khẩu mới"
+                          aria-label="Hiện mật khẩu mới"
+                          aria-pressed="false"
+                        ><i class="fa fa-eye-slash" aria-hidden="true"></i></button>
+                      </div>
+                      <small id="new-password-feedback" class="password-validation-message" aria-live="polite" hidden></small>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="password-field">
+                        <input
+                          id="confirm-password"
+                          name="confirmPassword"
+                          class="form-control"
+                          type="password"
+                          placeholder="Xác nhận mật khẩu mới"
+                          autocomplete="new-password"
+                          minlength="6"
+                          aria-describedby="confirm-password-feedback"
+                          required
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="confirm-password"
+                          data-show-label="Hiện xác nhận mật khẩu mới"
+                          aria-label="Hiện xác nhận mật khẩu mới"
+                          aria-pressed="false"
+                        ><i class="fa fa-eye-slash" aria-hidden="true"></i></button>
+                      </div>
+                      <small id="confirm-password-feedback" class="password-validation-message" aria-live="polite" hidden></small>
+                    </div>
+                    <div class="col-md-12">
+                      <button id="change-password-submit" class="btn" type="submit" disabled>Đổi mật khẩu</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- My Account End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Liên Hệ</h2>
+              <div class="contact-info">
+                <p><i class="fa fa-map-marker"></i>Từ Liêm, Hà Nội, Việt Nam</p>
+                <p><i class="fa fa-envelope"></i>quanghuytxc@gmail.com</p>
+                <p><i class="fa fa-phone"></i>+01234567890</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Theo Dõi Tôi</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href="#"><i class="fab fa-facebook-f"></i></a>
+                  <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Cửa Hàng</h2>
+              <ul>
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Chính sách bảo mật</a></li>
+                <li><a href="#">Hình thức vận chuyển</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Mua Hàng</h2>
+              <ul>
+                <li><a href="#">Chính sách thanh toán</a></li>
+                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="#">Chính sách hoàn trả</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>Nhận thanh toán bằng:</h2>
+              <img src="../img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Chứng chỉ bảo mật:</h2>
+              <img src="../img/godaddy.svg" alt="Payment Security" />
+              <img src="../img/norton.svg" alt="Payment Security" />
+              <img src="../img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy;
+              <a href="/">Helmet Store</a>. All Rights Reserved
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="../lib/easing/easing.min.js"></script>
+    <script src="../lib/slick/slick.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="../js/main.js"></script>
+    <script>
+      // Global variable to track edit mode
+      let isEditMode = false;
+      let currentEditId = null;
+
+      function setDefaultAddress(addressId) {
+        if (confirm("Đặt địa chỉ này làm mặc định?")) {
+          $.ajax({
+            url: "/users/set-default-address",
+            method: "POST",
+            data: { addressId: addressId },
+            success: function (response) {
+              if (response.success) {
+                alert("Đã đặt làm địa chỉ mặc định!");
+                location.reload();
+              } else {
+                alert(response.message || "Có lỗi xảy ra");
+              }
+            },
+            error: function () {
+              alert("Có lỗi xảy ra khi cập nhật địa chỉ mặc định");
+            },
+          });
+        }
+      }
+
+      function deleteAddress(addressId) {
+        if (confirm("Bạn có chắc muốn xóa địa chỉ này?")) {
+          $.ajax({
+            url: "/users/delete-address",
+            method: "POST",
+            data: { addressId: addressId },
+            success: function (response) {
+              if (response.success) {
+                alert("Đã xóa địa chỉ!");
+                location.reload();
+              } else {
+                alert(response.message || "Có lỗi xảy ra");
+              }
+            },
+            error: function () {
+              alert("Có lỗi xảy ra khi xóa địa chỉ");
+            },
+          });
+        }
+      }
+
+      function editAddress(
+        id,
+        fullName,
+        phone,
+        province,
+        district,
+        ward,
+        detailAddress
+      ) {
+        console.log("Edit address called with:", {
+          id,
+          fullName,
+          phone,
+          province,
+          district,
+          ward,
+          detailAddress,
+        });
+
+        // Set edit mode
+        isEditMode = true;
+        currentEditId = id;
+
+        // Update modal title
+        $("#editAddressModalLabel").text("Chỉnh Sửa Địa Chỉ Nhận Hàng");
+
+        // Populate form with existing data
+        $('#editAddressModal input[name="fullName"]').val(fullName);
+        $('#editAddressModal input[name="phone"]').val(phone);
+        $('#editAddressModal select[name="province"]').val(province);
+        $('#editAddressModal input[name="district"]').val(district);
+        $('#editAddressModal input[name="ward"]').val(ward);
+        $('#editAddressModal textarea[name="detailAddress"]').val(
+          detailAddress
+        );
+
+        // Show modal
+        $("#editAddressModal").modal("show");
+      }
+
+      // Handle form submission
+      $(document).ready(function () {
+        $("#editAddressModal form").on("submit", function (e) {
+          e.preventDefault();
+
+          const formData = {
+            fullName: $('input[name="fullName"]').val(),
+            phone: $('input[name="phone"]').val(),
+            province: $('select[name="province"]').val(),
+            district: $('input[name="district"]').val(),
+            ward: $('input[name="ward"]').val(),
+            detailAddress: $('textarea[name="detailAddress"]').val(),
+          };
+
+          console.log("Form submitted with data:", formData);
+          console.log("Edit mode:", isEditMode, "Edit ID:", currentEditId);
+
+          if (isEditMode && currentEditId) {
+            // Update existing address
+            formData.id = currentEditId;
+
+            console.log("Sending PUT request with data:", formData);
+
+            $.ajax({
+              url: "/users/update-address",
+              method: "PUT",
+              data: formData,
+              success: function (response) {
+                console.log("PUT request success:", response);
+                alert("Cập nhật địa chỉ thành công!");
+                $("#editAddressModal").modal("hide");
+                location.reload();
+              },
+              error: function (xhr) {
+                console.error("PUT request error:", xhr);
+                console.error("Error details:", {
+                  status: xhr.status,
+                  statusText: xhr.statusText,
+                  responseText: xhr.responseText,
+                  response: xhr.responseJSON,
+                });
+                alert(
+                  "Có lỗi xảy ra khi cập nhật địa chỉ! Chi tiết: " +
+                    (xhr.responseJSON?.message || xhr.statusText)
+                );
+              },
+            });
+          } else {
+            // Create new address (original behavior)
+            formData.setAsDefault = $('input[name="setAsDefault"]').is(
+              ":checked"
+            )
+              ? "1"
+              : "0";
+            formData.addressType = "home";
+
+            console.log("Sending POST request with data:", formData);
+
+            $.ajax({
+              url: "/users/update-address",
+              method: "POST",
+              data: formData,
+              success: function (response) {
+                console.log("POST request success:", response);
+                alert("Thêm địa chỉ mới thành công!");
+                $("#editAddressModal").modal("hide");
+                location.reload();
+              },
+              error: function (xhr) {
+                console.error("POST request error:", xhr);
+                alert("Có lỗi xảy ra khi thêm địa chỉ mới!");
+              },
+            });
+          }
+        });
+
+        // Reset form when modal is closed
+        $("#editAddressModal").on("hidden.bs.modal", function () {
+          isEditMode = false;
+          currentEditId = null;
+          $("#editAddressModalLabel").text("Thêm Địa Chỉ Nhận Hàng");
+          this.querySelector("form").reset();
+        });
+      });
+
+      // Xem chi tiết đơn hàng
+      function viewOrderDetails(orderId) {
+        // Chuyển đến trang chi tiết đơn hàng
+        window.location.href = `/orders/${orderId}`;
+      }
+
+      // Hủy đơn hàng
+      function cancelOrder(orderId) {
+        if (confirm("Bạn có chắc muốn hủy đơn hàng này không?")) {
+          const reason = prompt(
+            "Vui lòng cho biết lý do hủy đơn hàng:",
+            "Thay đổi ý định mua hàng"
+          );
+
+          if (reason === null) return; // User clicked Cancel
+
+          $.ajax({
+            url: `/orders/cancel/${orderId}`,
+            method: "POST",
+            data: { reason: reason || "Khách hàng hủy" },
+            success: function (response) {
+              if (response.success) {
+                alert("✅ " + response.message);
+                location.reload();
+              } else {
+                alert("❌ " + response.message);
+              }
+            },
+            error: function () {
+              alert("Có lỗi khi hủy đơn hàng");
+            },
+          });
+        }
+      }
+
+      // Set default address
+      function setDefaultAddress(addressId) {
+        $.ajax({
+          url: `/users/set-default-address/${addressId}`,
+          method: "POST",
+          success: function (response) {
+            if (response.success) {
+              alert("✅ " + response.message);
+              location.reload();
+            } else {
+              alert("❌ " + response.message);
+            }
+          },
+          error: function () {
+            alert("Có lỗi khi cập nhật địa chỉ");
+          },
+        });
+      }
+
+      // Delete address
+      function deleteAddress(addressId) {
+        if (confirm("Bạn có chắc muốn xóa địa chỉ này không?")) {
+          $.ajax({
+            url: `/users/delete-address/${addressId}`,
+            method: "POST",
+            success: function (response) {
+              if (response.success) {
+                alert("✅ " + response.message);
+                location.reload();
+              } else {
+                alert("❌ " + response.message);
+              }
+            },
+            error: function () {
+              alert("Có lỗi khi xóa địa chỉ");
+            },
+          });
+        }
+      }
+
+      // Event delegation for buttons with data attributes
+      document.addEventListener('DOMContentLoaded', function() {
+        // View Order Details
+        document.querySelectorAll('.view-order-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const orderId = this.getAttribute('data-order-id');
+            viewOrderDetails(orderId);
+          });
+        });
+
+        // Cancel Order
+        document.querySelectorAll('.cancel-order-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const orderId = this.getAttribute('data-order-id');
+            cancelOrder(orderId);
+          });
+        });
+
+        // Set Default Address
+        document.querySelectorAll('.set-default-address-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-address-id');
+            setDefaultAddress(addressId);
+          });
+        });
+
+        // Delete Address
+        document.querySelectorAll('.delete-address-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-address-id');
+            deleteAddress(addressId);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

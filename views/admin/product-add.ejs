@@ -1,0 +1,120 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Thêm sản phẩm</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+            <li class="breadcrumb-item">
+              <a href="/admin/products">Sản phẩm</a>
+            </li>
+            <li class="breadcrumb-item active">Thêm sản phẩm</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Thông tin sản phẩm</h3>
+            </div>
+            <form
+              method="post"
+              action="/admin/products/add"
+              enctype="multipart/form-data"
+            >
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="nameProduct">Tên sản phẩm</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="nameProduct"
+                    name="nameProduct"
+                    placeholder="Nhập tên sản phẩm"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="priceProduct">Giá</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="priceProduct"
+                    name="priceProduct"
+                    placeholder="Nhập giá sản phẩm"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="idCat">Danh mục</label>
+                  <select class="form-control" id="idCat" name="idCat" required>
+                    <option value="">-- Chọn danh mục --</option>
+                    <% categories.forEach(function(category) { %>
+                    <option value="<%= category.idCat %>">
+                      <%= category.nameCat %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="imgProduct">Hình ảnh sản phẩm</label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="imgProduct"
+                    name="imgProduct"
+                    accept="image/*"
+                  />
+                  <small class="form-text text-muted"
+                    >Chọn file hình ảnh (JPG, PNG, GIF). Tối đa 5MB.</small
+                  >
+                </div>
+                <div class="form-group">
+                  <label for="desProduct">Mô tả</label>
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    id="desProduct"
+                    name="desProduct"
+                    placeholder="Nhập mô tả sản phẩm"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="specification">Chi tiết sản phẩm</label>
+                  <textarea
+                    class="form-control"
+                    rows="6"
+                    id="specification"
+                    name="specification"
+                    placeholder="Nhập chi tiết sản phẩm (mỗi dòng một thông tin)&#10;Ví dụ:&#10;Chất liệu: Nhựa ABS cao cấp&#10;Trọng lượng: 1.2kg&#10;Kích thước: S, M, L&#10;Chuẩn an toàn: DOT, ECE&#10;Bảo hành: 12 tháng"
+                  ></textarea>
+                  <small class="form-text text-muted"
+                    >Mỗi dòng sẽ hiển thị như một mục trong danh sách chi tiết.</small
+                  >
+                </div>
+              </div>
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                  Thêm sản phẩm
+                </button>
+                <a href="/admin/products" class="btn btn-default">Hủy</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

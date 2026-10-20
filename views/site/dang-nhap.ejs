@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>Đăng Nhập - Helmet Store</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/favicon.ico" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="../lib/slick/slick.css" rel="stylesheet" />
+    <link href="../lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="../css/style.css" rel="stylesheet" />
+    
+    <!-- Custom Validation Styles -->
+    <style>
+      .invalid-feedback {
+        display: none;
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+      }
+      
+      .form-control.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+      }
+      
+      .form-control.is-invalid ~ .invalid-feedback {
+        display: block;
+      }
+      
+      .form-control.is-valid {
+        border-color: #28a745;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+      }
+      
+      .alert {
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+      }
+      
+      .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+      
+      .text-danger {
+        color: #dc3545 !important;
+      }
+    </style>
+    <link href="../css/premium.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6"><i class="fa fa-envelope"></i> leduyenltbn@gmail.com</div>
+          <div class="col-sm-6"><i class="fa fa-phone-alt"></i> 0123456789</div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="/" class="nav-item nav-link active">Trang Chủ</a>
+              <a href="/san-pham" class="nav-item nav-link">Sản Phẩm</a>
+              <!-- <a href="product-detail.html" class="nav-item nav-link">Product Detail</a> -->
+              <a href="/cart" class="nav-item nav-link">Giỏ Hàng</a>
+              <a href="/thanh-toan" class="nav-item nav-link">Thanh Toán</a>
+              <a href="/users/tai-khoan" class="nav-item nav-link"
+                >Tài khoản của bạn</a
+              >
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Trang khác</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/wishlist" class="dropdown-item"
+                    >Sản phẩm đã thích</a
+                  >
+                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
+                </div>
+              </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Tài khoản</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                  <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="index.html">
+                <img src="../img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(<%= wishlistCount || 0 %>)</span>
+              </a>
+              <a href="/cart" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(0)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item active">Đăng nhập</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Login Start -->
+    <div class="login">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6 mx-auto">
+            <div class="login-form">
+              <!-- Hiển thị thông báo lỗi -->
+              <% if (typeof message !== 'undefined' && message) { %>
+              <div class="alert alert-<%= typeof messageType !== 'undefined' && messageType === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle"></i> <%= message %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
+              
+              <form id="loginForm" action="/users/dang-nhap" method="post" novalidate>
+                <div class="row">
+                  <legend class="text-center">Đăng nhập</legend>
+                  <div class="col-md-6">
+                    <label for="username">Username <span class="text-danger">*</span></label>
+                    <input
+                      id="username"
+                      name="username"
+                      class="form-control"
+                      type="text"
+                      placeholder="Username hoặc Email"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Vui lòng nhập tên đăng nhập hoặc email
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="password">Mật khẩu <span class="text-danger">*</span></label>
+                    <input
+                      id="password"
+                      name="password"
+                      class="form-control"
+                      type="password"
+                      placeholder="Mật khẩu"
+                      required
+                      minlength="6"
+                    />
+                    <div class="invalid-feedback">
+                      Mật khẩu phải có ít nhất 6 ký tự
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="custom-control custom-checkbox">
+                      <!-- <input type="checkbox" class="custom-control-input" id="newaccount">
+                                            <label class="custom-control-label" for="newaccount">Lưu đăng nhập</label> -->
+                      <a href="/users/quen-mat-khau">Quên mật khẩu?</a>
+                    </div>
+                  </div>
+                  <div class="col-md-12 text-center">
+                    <button type="submit" class="btn">Đăng nhập</button>
+                  </div>
+                </div>
+              </form>
+              <a href="/users/dang-ky">Chưa có tài khoản? Đăng ký</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Login End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Liên Hệ</h2>
+              <div class="contact-info">
+                <p>
+                  <i class="fa fa-map-marker"></i>Hoàng Quốc Việt,Bắc Từ Liêm,Hà
+                  Nội, Việt Nam
+                </p>
+                <p><i class="fa fa-envelope"></i>leduyenltbn@gmail.com</p>
+                <p><i class="fa fa-phone"></i>0123456789</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Theo Dõi Tôi</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href="https://www.facebook.com"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                  <a href="https://www.linkedin.com"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                  <a href="https://www.instagram.com"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                  <a href="https://www.youtube.com"
+                    ><i class="fab fa-youtube"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Cửa Hàng</h2>
+              <ul>
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Chính sách bảo mật</a></li>
+                <li><a href="#">Hình thức vận chuyển</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Mua Hàng</h2>
+              <ul>
+                <li><a href="#">Chính sách thanh toán</a></li>
+                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="#">Chính sách hoàn trả</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>Nhận thanh toán bằng:</h2>
+              <img src="../img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Chứng chỉ bảo mật:</h2>
+              <img src="../img/godaddy.svg" alt="Payment Security" />
+              <img src="../img/norton.svg" alt="Payment Security" />
+              <img src="../img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy;
+              <a href="https:www.facebook.com">Helmet Store</a>. All Rights
+              Reserved
+            </p>
+          </div>
+
+          <div class="col-md-6 template-by">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="../lib/easing/easing.min.js"></script>
+    <script src="../lib/slick/slick.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="../js/main.js"></script>
+    <script>
+      // Bootstrap form validation - Login
+      (function() {
+        'use strict';
+        
+        // Fetch the form
+        var form = document.getElementById('loginForm');
+        var usernameInput = document.getElementById('username');
+        var passwordInput = document.getElementById('password');
+        
+        // When user types, just remove invalid class (don't auto-normalize)
+        usernameInput.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+        });
+        
+        // Password: just remove invalid class on input
+        passwordInput.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+        });
+        
+        form.addEventListener('submit', function(event) {
+          // Get trimmed values for validation
+          var trimmedUsername = usernameInput.value.trim();
+          var trimmedPassword = passwordInput.value.trim();
+          
+          // Validate with trimmed values
+          var isValid = trimmedUsername && trimmedPassword && trimmedPassword.length >= 6;
+          
+          if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Show specific error messages only if invalid
+            if (!trimmedUsername) {
+              usernameInput.classList.add('is-invalid');
+            }
+            if (!trimmedPassword || trimmedPassword.length < 6) {
+              passwordInput.classList.add('is-invalid');
+            }
+          } else {
+            // Replace with trimmed values and submit
+            usernameInput.value = trimmedUsername;
+            passwordInput.value = trimmedPassword;
+            // Form will submit naturally
+          }
+        }, false);
+      })();
+    </script>
+  </body>
+</html>
