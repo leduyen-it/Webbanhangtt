@@ -33,11 +33,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
-  session({
+/*  session({
     secret: "abcdefg",
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 1200000 },
+  })
+);*/
+app.set("trust proxy", 1);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1200000,
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
   })
 );
 
