@@ -1,6 +1,15 @@
 // Load environment variables
 require('dotenv').config();
 
+var sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET must be set in production");
+  }
+  sessionSecret = require("crypto").randomBytes(32).toString("hex");
+  console.warn("SESSION_SECRET is not set; using a temporary development secret.");
+}
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -32,19 +41,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(
-/*  session({
-    secret: "abcdefg",
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 1200000 },
-  })
-);*/
 app.set("trust proxy", 1);
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
