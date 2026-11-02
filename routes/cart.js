@@ -5,6 +5,35 @@ var modelCart = require("../models/model_cart");
 var modelWishlist = require("../models/model_wishlist");
 var modelProduct = require("../models/model_product");
 
+async function validateAvailableItem(idUser, idProduct, quantity, size) {
+  const product = await modelProduct.detail(idProduct);
+  if (!product || Number(product.showHide) !== 1) {
+    return { status: 404, message: "Sản phẩm hiện không còn được bán." };
+  }
+  if (
+    !["S", "M", "L"].includes(size) ||
+    Number(product[size]) !== 1 ||
+    Number(product.amountProduct) <= 0
+  ) {
+    return { status: 409, message: "Kích cỡ này hiện không có sẵn." };
+  }
+
+  const cartItems = await modelCart.getCartItems(idUser);
+  const alreadyInCart = cartItems
+    .filter(
+      (item) =>
+        Number(item.idProduct) === idProduct && item.size === size
+    )
+    .reduce((total, item) => total + Number(item.quantity || 0), 0);
+  if (alreadyInCart + quantity > Number(product.amountProduct)) {
+    return {
+      status: 409,
+      message: "Số lượng trong kho không đủ cho yêu cầu này.",
+    };
+  }
+  return null;
+}
+
 // GET /cart - Display cart page
 router.get("/", async function (req, res, next) {
   try {
@@ -42,15 +71,37 @@ router.get("/", async function (req, res, next) {
 // POST /cart/add - Add item to cart
 router.post("/add", async function (req, res, next) {
   try {
-    const idProduct = parseInt(req.body.idProduct, 10);
-    const quantity = parseInt(req.body.quantity, 10) || 1;
+    const idProduct = Number(req.body.idProduct);
+    const quantity =
+      req.body.quantity === undefined ? 1 : Number(req.body.quantity);
     const size = req.body.size || "M";
 
-    if (!idProduct || isNaN(idProduct)) {
-      return res.json({ success: false, message: "Thiếu thông tin sản phẩm" });
+    if (
+      !Number.isSafeInteger(idProduct) ||
+      idProduct <= 0 ||
+      !Number.isSafeInteger(quantity) ||
+      quantity <= 0 ||
+      quantity > 99
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Thông tin sản phẩm hoặc số lượng không hợp lệ.",
+      });
     }
 
     if (req.session.User) {
+      const availability = await validateAvailableItem(
+        req.session.User.id,
+        idProduct,
+        quantity,
+        size
+      );
+      if (availability) {
+        return res.status(availability.status).json({
+          success: false,
+          message: availability.message,
+        });
+      }
       // Logged in user
       const result = await modelCart.addToCart(
         req.session.User.id,
@@ -84,10 +135,11 @@ router.get("/add", async function (req, res, next) {
     const { idProduct } = req.query;
     const quantity = parseInt(req.query.quantity, 10) || 1;
     const size = req.query.size || "M";
+    const numericId = Number(idProduct);
 
     const returnTo = req.get("referer") || "/cart";
 
-    if (!idProduct) {
+    if (!Number.isSafeInteger(numericId) || numericId <= 0) {
       return res.redirect(returnTo);
     }
 
@@ -95,7 +147,14 @@ router.get("/add", async function (req, res, next) {
       return res.redirect("/users/dang-nhap");
     }
 
-    await modelCart.addToCart(req.session.User.id, idProduct, quantity, size);
+    const availability = await validateAvailableItem(
+      req.session.User.id,
+      numericId,
+      quantity,
+      size
+    );
+    if (availability) return res.redirect(returnTo);
+    await modelCart.addToCart(req.session.User.id, numericId, quantity, size);
     return res.redirect(returnTo);
   } catch (error) {
     console.error("GET Add to cart error:", error);

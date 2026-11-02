@@ -131,11 +131,7 @@ app.use(function (req, res, next) {
 
       ejs.renderFile(
         path.join(__dirname, "views", "site", "chatbox.ejs"),
-        {
-          aiConfigured:
-            typeof process.env.OPENAI_API_KEY === "string" &&
-            Boolean(process.env.OPENAI_API_KEY.trim()),
-        },
+        {},
         function (chatError, chatbox) {
           if (chatError) return next(chatError);
           var closingBody = /<\/body\s*>/i;
