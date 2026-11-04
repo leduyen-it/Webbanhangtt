@@ -78,20 +78,7 @@
               <a href="/users/tai-khoan" class="nav-item nav-link"
                 >Tài khoản của bạn</a
               >
-              <div class="nav-item dropdown">
-                <a
-                  href="#"
-                  class="nav-link dropdown-toggle"
-                  data-toggle="dropdown"
-                  >Trang khác</a
-                >
-                <div class="dropdown-menu">
-                  <a href="/wishlist" class="dropdown-item"
-                    >Sản phẩm đã thích</a
-                  >
-                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
-                </div>
-              </div>
+              <%- include("partials/navigation-other-pages", { currentPath: typeof currentPath === "undefined" ? "" : currentPath }) %>
             </div>
             <div class="navbar-nav ml-auto">
               <% if (user) { %>
@@ -541,9 +528,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Cửa Hàng</h2>
               <ul>
-                <li><a href="#">Giới thiệu</a></li>
-                <li><a href="#">Chính sách bảo mật</a></li>
-                <li><a href="#">Hình thức vận chuyển</a></li>
+                <li><a href="/thong-tin/gioi-thieu">Giới thiệu</a></li>
+                <li><a href="/thong-tin/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
+                <li><a href="/thong-tin/hinh-thuc-van-chuyen">Hình thức vận chuyển</a></li>
               </ul>
             </div>
           </div>
@@ -552,9 +539,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Mua Hàng</h2>
               <ul>
-                <li><a href="#">Chính sách thanh toán</a></li>
-                <li><a href="#">Chính sách vận chuyển</a></li>
-                <li><a href="#">Chính sách hoàn trả</a></li>
+                <li><a href="/thong-tin/chinh-sach-thanh-toan">Chính sách thanh toán</a></li>
+                <li><a href="/thong-tin/chinh-sach-van-chuyen">Chính sách vận chuyển</a></li>
+                <li><a href="/thong-tin/chinh-sach-hoan-tra">Chính sách hoàn trả</a></li>
               </ul>
             </div>
           </div>

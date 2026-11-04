@@ -69,7 +69,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <i class="fa fa-envelope"></i> tranhuy@gmail.com
+            <i class="fa fa-envelope"></i> leduyenltbn@gmail.com
           </div>
           <div class="col-sm-6">
             <i class="fa fa-phone-alt"></i> +01234567890
@@ -103,17 +103,7 @@
               <a href="/cart" class="nav-item nav-link">Giỏ Hàng</a>
               <a href="/thanh-toan" class="nav-item nav-link active">Thanh Toán</a>
               <a href="/users/tai-khoan" class="nav-item nav-link">Tài khoản của bạn</a>
-              <div class="nav-item dropdown">
-                <a
-                  href="#"
-                  class="nav-link dropdown-toggle"
-                  data-toggle="dropdown"
-                >Trang khác</a>
-                <div class="dropdown-menu">
-                  <a href="/wishlist" class="dropdown-item">Sản phẩm đã thích</a>
-                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
-                </div>
-              </div>
+              <%- include("partials/navigation-other-pages", { currentPath: typeof currentPath === "undefined" ? "" : currentPath }) %>
             </div>
             <div class="navbar-nav ml-auto">
               <% if (user) { %>
@@ -211,7 +201,12 @@
           <div class="col-lg-8">
             <div class="checkout-inner">
               <div class="billing-address">
-                <h2>Thông Tin Đặt Hàng</h2>
+                <div class="checkout-heading">
+                  <a href="/cart" class="checkout-back-link" aria-label="Quay lại giỏ hàng" title="Quay lại giỏ hàng">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                  </a>
+                  <h2>Thông Tin Đặt Hàng</h2>
+                </div>
 
                 <% if (user) { %>
                 <div class="row mb-3">
@@ -313,6 +308,7 @@
                           type="checkbox"
                           class="item-checkbox"
                           checked
+                          disabled
                           data-price="<%= item.priceProduct * item.quantity %>"
                           data-cart-id="<%= item.idCart %>"
                         />
@@ -421,7 +417,7 @@
               <h2>Liên Hệ</h2>
               <div class="contact-info">
                 <p><i class="fa fa-map-marker"></i>Hà Nội, Việt Nam</p>
-                <p><i class="fa fa-envelope"></i>tranhuy@gmail.com</p>
+                <p><i class="fa fa-envelope"></i>leduyenltbn@gmail.com</p>
                 <p><i class="fa fa-phone"></i>+01234567890</p>
               </div>
             </div>
@@ -446,9 +442,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Cửa Hàng</h2>
               <ul>
-                <li><a href="#">Giới thiệu</a></li>
-                <li><a href="#">Chính sách bảo mật</a></li>
-                <li><a href="#">Hình thức vận chuyển</a></li>
+                <li><a href="/thong-tin/gioi-thieu">Giới thiệu</a></li>
+                <li><a href="/thong-tin/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
+                <li><a href="/thong-tin/hinh-thuc-van-chuyen">Hình thức vận chuyển</a></li>
               </ul>
             </div>
           </div>
@@ -457,9 +453,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Mua Hàng</h2>
               <ul>
-                <li><a href="#">Chính sách thanh toán</a></li>
-                <li><a href="#">Chính sách vận chuyển</a></li>
-                <li><a href="#">Chính sách hoàn trả</a></li>
+                <li><a href="/thong-tin/chinh-sach-thanh-toan">Chính sách thanh toán</a></li>
+                <li><a href="/thong-tin/chinh-sach-van-chuyen">Chính sách vận chuyển</a></li>
+                <li><a href="/thong-tin/chinh-sach-hoan-tra">Chính sách hoàn trả</a></li>
               </ul>
             </div>
           </div>

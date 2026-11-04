@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %> - Helmet Store</title>
+    <meta name="description" content="<%= page.intro %>" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/premium.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="information-header">
+      <div class="container d-flex align-items-center justify-content-between py-3">
+        <a href="/" class="information-brand">Helmet Store</a>
+        <a href="/" class="information-home"><i class="fa fa-home mr-1"></i> Trang chủ</a>
+      </div>
+    </header>
+    <main class="information-page">
+      <div class="container">
+        <article class="information-card">
+          <h1><%= page.title %></h1>
+          <p><%= page.intro %></p>
+          <% page.sections.forEach(function (section) { %>
+          <section class="information-section">
+            <h2><%= section.title %></h2>
+            <p><%= section.body %></p>
+          </section>
+          <% }); %>
+          <a href="/" class="information-back"><i class="fa fa-arrow-left mr-1"></i> Quay về trang chủ</a>
+        </article>
+      </div>
+    </main>
+  </body>
+</html>

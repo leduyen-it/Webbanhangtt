@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/img/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Tìm hiểu về Helmet Store — cửa hàng trực tuyến chuyên kinh doanh mũ bảo hiểm và phụ kiện."
+    />
+    <title>Giới thiệu Helmet Store</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="/lib/slick/slick.css" rel="stylesheet" />
+    <link href="/lib/slick/slick-theme.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/premium.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i> leduyenltbn@gmail.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i> +01234567890
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="/" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+            aria-controls="navbarCollapse"
+            aria-expanded="false"
+            aria-label="Mở menu"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="/" class="nav-item nav-link">Trang Chủ</a>
+              <a href="/san-pham" class="nav-item nav-link">Sản Phẩm</a>
+              <a href="/cart" class="nav-item nav-link">Giỏ Hàng</a>
+              <a href="/thanh-toan" class="nav-item nav-link">Thanh Toán</a>
+              <a href="/users/tai-khoan" class="nav-item nav-link"
+                >Tài khoản của bạn</a
+              >
+              <%- include("partials/navigation-other-pages", { currentPath: typeof currentPath === "undefined" ? "" : currentPath }) %>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <% if (user) { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  ><i class="fa fa-user"></i> <%= user.username %></a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/tai-khoan" class="dropdown-item"
+                    >Tài khoản của tôi</a
+                  >
+                  <a href="/orders" class="dropdown-item">Đơn hàng</a>
+                  <a href="/users/dang-xuat" class="dropdown-item">Đăng xuất</a>
+                </div>
+              </div>
+              <% } else { %>
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Tài khoản</a
+                >
+                <div class="dropdown-menu">
+                  <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                  <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="/"><img src="/img/logo.png" alt="Helmet Store" /></a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="/wishlist" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(<%= wishlistCount || 0 %>)</span>
+              </a>
+              <a href="/cart" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(<%= cartCount || 0 %>)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="about-page">
+      <section class="about-hero">
+        <div class="container">
+          <div class="about-hero-content">
+            <span class="about-eyebrow">An tâm trên mọi hành trình</span>
+            <h1>GIỚI THIỆU HELMET STORE</h1>
+            <p>
+              Đồng hành cùng bạn chọn chiếc mũ phù hợp — để mỗi chuyến đi thêm
+              tự tin và an tâm.
+            </p>
+            <a class="about-button" href="/san-pham">
+              Khám phá sản phẩm <i class="fa fa-arrow-right"></i>
+            </a>
+          </div>
+          <span class="about-hero-caption"
+            ><i class="fa fa-shield-alt"></i> Chọn đúng mũ, vững tâm lái xe</span
+          >
+        </div>
+      </section>
+
+      <section class="about-introduction">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-6">
+              <div class="about-image-wrap">
+                <img
+                  src="/img/slider-3.jpg"
+                  alt="Các mẫu mũ bảo hiểm đa dạng tại Helmet Store"
+                  loading="lazy"
+                />
+                <div class="about-image-note">
+                  <i class="fa fa-motorcycle"></i>
+                  <span>Đồng hành trên mọi cung đường</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="about-copy">
+                <span class="about-eyebrow">Câu chuyện của chúng tôi</span>
+                <h2>Mua sắm mũ bảo hiểm dễ dàng, an tâm hơn</h2>
+                <p>
+                  Helmet Store là website thương mại điện tử chuyên kinh doanh
+                  mũ bảo hiểm và phụ kiện. Chúng tôi mong muốn giúp bạn dễ dàng
+                  tìm thấy sản phẩm phù hợp với nhu cầu, phong cách và hành
+                  trình của mình.
+                </p>
+                <p>
+                  Với thông tin sản phẩm rõ ràng và trải nghiệm mua sắm trực
+                  tuyến thuận tiện, Helmet Store luôn sẵn sàng hỗ trợ bạn từ
+                  lúc tìm hiểu đến khi hoàn tất đơn hàng.
+                </p>
+                <a href="/san-pham" class="about-text-link">
+                  Xem danh sách sản phẩm <i class="fa fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-mission">
+        <div class="container">
+          <div class="about-mission-content">
+            <span class="about-eyebrow">Sứ mệnh</span>
+            <h2>Chọn chiếc mũ phù hợp, bảo vệ điều quan trọng</h2>
+            <p>
+              Mục tiêu của chúng tôi là mang đến những lựa chọn mũ bảo hiểm phù
+              hợp, góp phần bảo vệ an toàn cho bạn khi tham gia giao thông. Mỗi
+              hành trình vững tâm bắt đầu từ lựa chọn được cân nhắc kỹ càng.
+            </p>
+          </div>
+          <div class="about-mission-icon" aria-hidden="true">
+            <i class="fa fa-shield-alt"></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-services">
+        <div class="container">
+          <div class="about-section-heading">
+            <span class="about-eyebrow">Đồng hành cùng bạn</span>
+            <h2>Sản phẩm và dịch vụ</h2>
+            <p>
+              Tập trung vào những điều thiết thực để bạn mua sắm dễ dàng và tự
+              tin hơn.
+            </p>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-lg-3">
+              <article class="about-feature-card">
+                <span class="about-feature-icon"
+                  ><i class="fa fa-hard-hat"></i
+                ></span>
+                <h3>Đa dạng lựa chọn</h3>
+                <p>
+                  Nhiều dòng mũ bảo hiểm và phụ kiện đáp ứng các nhu cầu khác
+                  nhau.
+                </p>
+              </article>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <article class="about-feature-card">
+                <span class="about-feature-icon"
+                  ><i class="fa fa-clipboard-list"></i
+                ></span>
+                <h3>Thông tin rõ ràng</h3>
+                <p>
+                  Thông tin sản phẩm được trình bày để bạn thuận tiện tham khảo
+                  trước khi chọn mua.
+                </p>
+              </article>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <article class="about-feature-card">
+                <span class="about-feature-icon"
+                  ><i class="fa fa-search"></i
+                ></span>
+                <h3>Mua sắm trực tuyến</h3>
+                <p>
+                  Hỗ trợ tìm kiếm, xem sản phẩm và đặt hàng thuận tiện ngay
+                  trên website.
+                </p>
+              </article>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <article class="about-feature-card">
+                <span class="about-feature-icon"
+                  ><i class="fa fa-headset"></i
+                ></span>
+                <h3>Luôn sẵn sàng hỗ trợ</h3>
+                <p>
+                  Hỗ trợ khách hàng trong quá trình tìm hiểu và mua sắm tại
+                  Helmet Store.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-commitments">
+        <div class="container">
+          <div class="about-section-heading">
+            <span class="about-eyebrow">Cam kết của Helmet Store</span>
+            <h2>Trải nghiệm bạn có thể tin tưởng</h2>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="about-commitment">
+                <i class="fa fa-check-circle"></i>
+                <div>
+                  <h3>Minh bạch thông tin</h3>
+                  <p>
+                    Cung cấp thông tin sản phẩm rõ ràng, hỗ trợ bạn lựa chọn
+                    phù hợp.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="about-commitment">
+                <i class="fa fa-shopping-bag"></i>
+                <div>
+                  <h3>Thuận tiện mua sắm</h3>
+                  <p>
+                    Tìm kiếm và đặt hàng trực tuyến với các bước đơn giản, dễ
+                    theo dõi.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="about-commitment">
+                <i class="fa fa-heart"></i>
+                <div>
+                  <h3>Hỗ trợ chu đáo</h3>
+                  <p>
+                    Lắng nghe và hỗ trợ khách hàng trong suốt quá trình mua
+                    sắm.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="about-final-cta">
+            <div>
+              <h2>Sẵn sàng cho hành trình tiếp theo?</h2>
+              <p>Khám phá các sản phẩm đang có tại Helmet Store.</p>
+            </div>
+            <a class="about-button" href="/san-pham">
+              Khám phá sản phẩm <i class="fa fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Liên Hệ</h2>
+              <div class="contact-info">
+                <p><i class="fa fa-map-marker"></i>Hà Nội, Việt Nam</p>
+                <p><i class="fa fa-envelope"></i>leduyenltbn@gmail.com</p>
+                <p><i class="fa fa-phone"></i>0123456789</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Theo Dõi Tôi</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href="https://www.facebook.com/ybx1802" aria-label="Facebook"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                  <a
+                    href="https://www.linkedin.com/in/huy-tran-57777b202/"
+                    aria-label="LinkedIn"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Cửa Hàng</h2>
+              <ul>
+                <li><a href="/thong-tin/gioi-thieu">Giới thiệu</a></li>
+                <li>
+                  <a href="/thong-tin/chinh-sach-bao-mat"
+                    >Chính sách bảo mật</a
+                  >
+                </li>
+                <li>
+                  <a href="/thong-tin/hinh-thuc-van-chuyen"
+                    >Hình thức vận chuyển</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Thông Tin Mua Hàng</h2>
+              <ul>
+                <li>
+                  <a href="/thong-tin/chinh-sach-thanh-toan"
+                    >Chính sách thanh toán</a
+                  >
+                </li>
+                <li>
+                  <a href="/thong-tin/chinh-sach-van-chuyen"
+                    >Chính sách vận chuyển</a
+                  >
+                </li>
+                <li>
+                  <a href="/thong-tin/chinh-sach-hoan-tra"
+                    >Chính sách hoàn trả</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>Nhận thanh toán bằng:</h2>
+              <img src="/img/payment-method.png" alt="Phương thức thanh toán" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Chứng chỉ bảo mật:</h2>
+              <img src="/img/godaddy.svg" alt="GoDaddy Secured" />
+              <img src="/img/norton.svg" alt="Norton Secured" />
+              <img src="/img/ssl.svg" alt="SSL Secure" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy;
+              <a href="/">Helmet Store</a>. All Rights Reserved
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="#" class="back-to-top" aria-label="Lên đầu trang"
+      ><i class="fa fa-chevron-up"></i
+    ></a>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/slick/slick.min.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

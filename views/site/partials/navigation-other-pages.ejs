@@ -1,0 +1,30 @@
+<div class="nav-item dropdown">
+  <a
+    href="#"
+    class="nav-link dropdown-toggle"
+    data-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="false"
+    >Trang khác</a
+  >
+  <div class="dropdown-menu">
+    <a
+      href="/thong-tin/gioi-thieu"
+      class="dropdown-item"
+      <% if (currentPath === '/thong-tin/gioi-thieu') { %>aria-current="page"<% } %>
+      >Giới thiệu</a
+    >
+    <a
+      href="/lien-he"
+      class="dropdown-item"
+      <% if (currentPath === '/lien-he') { %>aria-current="page"<% } %>
+      >Liên hệ</a
+    >
+    <a
+      href="/wishlist"
+      class="dropdown-item"
+      <% if (currentPath === '/wishlist') { %>aria-current="page"<% } %>
+      >Sản phẩm đã thích</a
+    >
+  </div>
+</div>

@@ -59,6 +59,8 @@ app.use(
 
 // Expose slug helper to all views
 app.use(function (req, res, next) {
+  res.locals.currentPath = req.path;
+
   function xoa_dau(str) {
     if (!str) return "";
     str = str.toString();
@@ -124,6 +126,8 @@ app.use(function (req, res, next) {
     ) {
       return render.apply(this, arguments);
     }
+
+    options = Object.assign({}, options || {}, { currentPath: req.path });
 
     var response = this;
     return render.call(this, view, options, function (error, html) {

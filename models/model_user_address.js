@@ -43,70 +43,93 @@ function createAddress(addressData) {
       isDefault,
     } = addressData;
 
-    if (isDefault) {
-      // If setting as default, first remove default from all other addresses
-      const resetSql = `UPDATE user_addresses SET isDefault = 0 WHERE idUser = ?`;
-      db.query(resetSql, [idUser], (resetErr) => {
-        if (resetErr) {
-          reject(resetErr);
+    db.getConnection((connectionError, connection) => {
+      if (connectionError) {
+        reject(connectionError);
+        return;
+      }
+
+      const query = (sql, params) =>
+        new Promise((queryResolve, queryReject) => {
+          connection.query(sql, params, (err, result) => {
+            if (err) queryReject(err);
+            else queryResolve(result);
+          });
+        });
+
+      const rollback = (error) => {
+        connection.rollback((rollbackError) => {
+          connection.release();
+          if (rollbackError) {
+            error.message += `; rollback failed: ${rollbackError.message}`;
+          }
+          reject(error);
+        });
+      };
+
+      connection.beginTransaction(async (transactionError) => {
+        if (transactionError) {
+          connection.release();
+          reject(transactionError);
           return;
         }
 
-        // Then insert new address
-        const insertSql = `INSERT INTO user_addresses 
-                    (idUser, fullName, phone, province, district, ward, detailAddress, addressType, isDefault) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        try {
+          const users = await query(
+            "SELECT idUser FROM user WHERE idUser = ? FOR UPDATE",
+            [idUser]
+          );
+          if (!users.length) throw new Error("Không tìm thấy tài khoản.");
 
-        db.query(
-          insertSql,
-          [
-            idUser,
-            fullName,
-            phone,
-            province,
-            district,
-            ward,
-            detailAddress,
-            addressType,
-            1,
-          ],
-          (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
+          const addresses = await query(
+            "SELECT idAddress FROM user_addresses WHERE idUser = ?",
+            [idUser]
+          );
+          if (addresses.length >= 3) {
+            const limitError = new Error(
+              "Mỗi tài khoản chỉ được lưu tối đa 3 địa chỉ."
+            );
+            limitError.code = "ADDRESS_LIMIT_REACHED";
+            throw limitError;
+          }
+
+          if (isDefault) {
+            await query(
+              "UPDATE user_addresses SET isDefault = 0 WHERE idUser = ?",
+              [idUser]
+            );
+          }
+
+          const result = await query(
+            `INSERT INTO user_addresses
+              (idUser, fullName, phone, province, district, ward, detailAddress, addressType, isDefault)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              idUser,
+              fullName,
+              phone,
+              province,
+              district,
+              ward,
+              detailAddress,
+              addressType,
+              isDefault ? 1 : 0,
+            ]
+          );
+
+          connection.commit((commitError) => {
+            if (commitError) {
+              rollback(commitError);
+              return;
             }
-          }
-        );
-      });
-    } else {
-      // Just insert new address without setting as default
-      const insertSql = `INSERT INTO user_addresses 
-                (idUser, fullName, phone, province, district, ward, detailAddress, addressType, isDefault) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-      db.query(
-        insertSql,
-        [
-          idUser,
-          fullName,
-          phone,
-          province,
-          district,
-          ward,
-          detailAddress,
-          addressType,
-          0,
-        ],
-        (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
+            connection.release();
             resolve(result);
-          }
+          });
+        } catch (error) {
+          rollback(error);
         }
-      );
-    }
+      });
+    });
   });
 }
 
@@ -150,7 +173,7 @@ function deleteAddress(addressId, userId) {
 }
 
 // Update address
-function updateAddress(addressId, addressData) {
+function updateAddress(addressId, userId, addressData) {
   console.log("=== MODEL UPDATE ADDRESS ===");
   console.log("addressId:", addressId);
   console.log("addressData:", addressData);
@@ -169,7 +192,7 @@ function updateAddress(addressId, addressData) {
     const sql = `UPDATE user_addresses SET 
             fullName = ?, phone = ?, province = ?, district = ?, ward = ?, 
             detailAddress = ?, addressType = ?, updatedAt = NOW() 
-            WHERE idAddress = ?`;
+            WHERE idAddress = ? AND idUser = ?`;
 
     console.log("SQL Query:", sql);
     console.log("SQL Params:", [
@@ -181,6 +204,7 @@ function updateAddress(addressId, addressData) {
       detailAddress,
       addressType,
       addressId,
+      userId,
     ]);
 
     db.query(
@@ -194,6 +218,7 @@ function updateAddress(addressId, addressData) {
         detailAddress,
         addressType,
         addressId,
+        userId,
       ],
       (err, result) => {
         if (err) {
@@ -204,12 +229,21 @@ function updateAddress(addressId, addressData) {
           console.log("Affected rows:", result.affectedRows);
 
           if (result.affectedRows === 0) {
-            console.log("WARNING: No rows affected - address not found");
-            reject(
-              new Error(
-                "Không tìm thấy địa chỉ hoặc bạn không có quyền cập nhật"
-              )
-            );
+            const existsSql =
+              "SELECT idAddress FROM user_addresses WHERE idAddress = ? AND idUser = ? LIMIT 1";
+            db.query(existsSql, [addressId, userId], (checkErr, rows) => {
+              if (checkErr) {
+                reject(checkErr);
+              } else if (rows.length === 0) {
+                reject(
+                  new Error(
+                    "Không tìm thấy địa chỉ hoặc bạn không có quyền cập nhật"
+                  )
+                );
+              } else {
+                resolve(result);
+              }
+            });
           } else {
             resolve(result);
           }

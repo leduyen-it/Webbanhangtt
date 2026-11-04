@@ -76,20 +76,7 @@
               <a href="/users/tai-khoan" class="nav-item nav-link"
                 >Tài khoản của bạn</a
               >
-              <div class="nav-item dropdown">
-                <a
-                  href="#"
-                  class="nav-link dropdown-toggle"
-                  data-toggle="dropdown"
-                  >Trang khác</a
-                >
-                <div class="dropdown-menu">
-                  <a href="/wishlist" class="dropdown-item"
-                    >Sản phẩm đã thích</a
-                  >
-                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
-                </div>
-              </div>
+              <%- include("partials/navigation-other-pages", { currentPath: typeof currentPath === "undefined" ? "" : currentPath }) %>
             </div>
             <div class="navbar-nav ml-auto">
               <% if (user) { %>
@@ -202,7 +189,7 @@
                   <tbody class="align-middle">
                     <% if (cartItems && cartItems.length > 0) { %> <% for (let
                     item of cartItems) { %>
-                    <tr>
+                    <tr class="cart-item-row">
                       <td>
                         <input
                           type="checkbox"
@@ -213,7 +200,7 @@
                           onchange="updateTotal()"
                         />
                       </td>
-                      <td>
+                      <td data-label="Sản phẩm">
                         <div class="img">
                           <a
                             href="/san-pham/<%= item.nameProduct.toLowerCase().replace(/\s+/g, '-').replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, 'a').replace(/[èéẹẻẽêềếệểễ]/g, 'e').replace(/[ìíịỉĩ]/g, 'i').replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, 'o').replace(/[ùúụủũưừứựửữ]/g, 'u').replace(/[ỳýỵỷỹ]/g, 'y').replace(/đ/g, 'd') %>"
@@ -222,8 +209,8 @@
                           <p><%= item.nameProduct%></p>
                         </div>
                       </td>
-                      <td><%=item.priceProduct.toLocaleString()%> đ</td>
-                      <td>
+                      <td data-label="Giá"><%=item.priceProduct.toLocaleString()%> đ</td>
+                      <td data-label="Số lượng">
                         <div class="qty">
                           <button
                             class="btn-minus qty-btn"
@@ -244,11 +231,11 @@
                           </button>
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Tổng">
                         <%=(item.quantity *
                         item.priceProduct).toLocaleString()%> đ
                       </td>
-                      <td>
+                      <td data-label="Xóa">
                         <button
                           class="remove-from-cart delete-btn"
                           data-cart-id="<%= item.idCart %>"
@@ -259,7 +246,8 @@
                     </tr>
                     <% } %> <% } else { %>
                     <tr>
-                      <td colspan="6" class="text-center">
+                      <td colspan="6" class="text-center empty-cart">
+                        <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                         <p>Giỏ hàng trống</p>
                         <a href="/san-pham" class="btn btn-primary"
                           >Tiếp tục mua sắm</a
@@ -290,7 +278,7 @@
                           ><%= (cartTotal || 0).toLocaleString() %> đ</span
                         >
                       </p>
-                      <p>Phí ship<span id="shipping">30.000 đ</span></p>
+                      <p>Phí ship<span id="shipping">0 đ</span></p>
                       <h2>
                         Tổng cộng<span id="total"
                           ><%= ((cartTotal || 0) + 30000).toLocaleString() %>
@@ -361,9 +349,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Cửa Hàng</h2>
               <ul>
-                <li><a href="#">Giới thiệu</a></li>
-                <li><a href="#">Chính sách bảo mật</a></li>
-                <li><a href="#">Hình thức vận chuyển</a></li>
+                <li><a href="/thong-tin/gioi-thieu">Giới thiệu</a></li>
+                <li><a href="/thong-tin/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
+                <li><a href="/thong-tin/hinh-thuc-van-chuyen">Hình thức vận chuyển</a></li>
               </ul>
             </div>
           </div>
@@ -372,9 +360,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Mua Hàng</h2>
               <ul>
-                <li><a href="#">Chính sách thanh toán</a></li>
-                <li><a href="#">Chính sách vận chuyển</a></li>
-                <li><a href="#">Chính sách hoàn trả</a></li>
+                <li><a href="/thong-tin/chinh-sach-thanh-toan">Chính sách thanh toán</a></li>
+                <li><a href="/thong-tin/chinh-sach-van-chuyen">Chính sách vận chuyển</a></li>
+                <li><a href="/thong-tin/chinh-sach-hoan-tra">Chính sách hoàn trả</a></li>
               </ul>
             </div>
           </div>
@@ -548,9 +536,16 @@
 
       // Function để cập nhật tổng tiền
       function updateTotal() {
-        const itemCheckboxes = document.querySelectorAll(
-          ".item-checkbox:checked"
-        );
+        const allItemCheckboxes = document.querySelectorAll(".item-checkbox");
+        const itemCheckboxes = document.querySelectorAll(".item-checkbox:checked");
+        const selectAllCheckbox = document.getElementById("selectAll");
+
+        if (selectAllCheckbox) {
+          selectAllCheckbox.checked =
+            allItemCheckboxes.length > 0 &&
+            itemCheckboxes.length === allItemCheckboxes.length;
+        }
+
         let subtotal = 0;
 
         itemCheckboxes.forEach((checkbox) => {
@@ -565,6 +560,8 @@
         // Cập nhật hiển thị
         document.getElementById("subtotal").textContent =
           subtotal.toLocaleString() + " đ";
+        document.getElementById("shipping").textContent =
+          shipping.toLocaleString() + " đ";
         document.getElementById("total").textContent =
           total.toLocaleString() + " đ";
 
@@ -586,33 +583,22 @@
 
       // Function để cập nhật trạng thái các nút xóa và tăng/giảm
       function updateQuantityButtonsState() {
-        const allDeleteButtons = document.querySelectorAll(".delete-btn");
-        const allQtyButtons = document.querySelectorAll(".qty-btn");
-        const selectedCheckboxes = document.querySelectorAll(".item-checkbox:checked");
-
-        // Nếu có sản phẩm được chọn, vô hiệu hóa nút xóa
-        const hasSelectedItems = selectedCheckboxes.length > 0;
-
-        allDeleteButtons.forEach((btn) => {
-          if (hasSelectedItems) {
-            btn.style.opacity = "0.5";
-            btn.style.cursor = "not-allowed";
-            btn.style.pointerEvents = "none";
-          } else {
-            btn.style.opacity = "1";
-            btn.style.cursor = "pointer";
-            btn.style.pointerEvents = "auto";
-          }
-        });
-
-        // Vô hiệu hóa nút +/- cho sản phẩm được chọn
         const allCheckboxes = document.querySelectorAll(".item-checkbox");
         allCheckboxes.forEach((checkbox) => {
           const cartId = checkbox.dataset.cartId;
+          const deleteBtn = document.querySelector(
+            `.delete-btn[data-cart-id="${cartId}"]`
+          );
           const qtyBtns = document.querySelectorAll(`.qty-btn[data-cart-id="${cartId}"]`);
-          
+
+          if (deleteBtn) {
+            deleteBtn.disabled = checkbox.checked;
+            deleteBtn.style.opacity = checkbox.checked ? "0.5" : "1";
+            deleteBtn.style.cursor = checkbox.checked ? "not-allowed" : "pointer";
+            deleteBtn.style.pointerEvents = checkbox.checked ? "none" : "auto";
+          }
+
           if (checkbox.checked) {
-            // Nếu được chọn, vô hiệu hóa nút +/-
             qtyBtns.forEach(btn => {
               btn.style.opacity = "0.5";
               btn.style.cursor = "not-allowed";
@@ -620,7 +606,6 @@
               btn.disabled = true;
             });
           } else {
-            // Nếu không được chọn, bật lại nút +/-
             qtyBtns.forEach(btn => {
               btn.style.opacity = "1";
               btn.style.cursor = "pointer";

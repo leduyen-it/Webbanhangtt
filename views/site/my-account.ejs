@@ -76,20 +76,7 @@
               <a href="/users/tai-khoan" class="nav-item nav-link active"
                 >Tài khoản của bạn</a
               >
-              <div class="nav-item dropdown">
-                <a
-                  href="#"
-                  class="nav-link dropdown-toggle"
-                  data-toggle="dropdown"
-                  >Trang khác</a
-                >
-                <div class="dropdown-menu">
-                  <a href="/wishlist" class="dropdown-item"
-                    >Sản phẩm đã thích</a
-                  >
-                  <a href="/lien-he" class="dropdown-item">Liên hệ</a>
-                </div>
-              </div>
+              <%- include("partials/navigation-other-pages", { currentPath: typeof currentPath === "undefined" ? "" : currentPath }) %>
             </div>
             <div class="navbar-nav ml-auto">
               <% if (user) { %>
@@ -288,7 +275,7 @@
                         </td>
                         <td>
                           <strong
-                            ><%= order.totalAmount.toLocaleString('vi-VN') %>đ</strong
+                            ><%= Number(order.totalAmount).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) %> đ</strong
                           >
                         </td>
                         <td>
@@ -380,38 +367,57 @@
                 role="tabpanel"
                 aria-labelledby="address-nav"
               >
-                <h4>Địa Chỉ Nhận Hàng</h4>
+                <h4><i class="fa fa-map-marker-alt"></i> Địa Chỉ Nhận Hàng</h4>
 
                 <!-- Hiển thị thông báo nếu có -->
                 <% if (typeof message !== 'undefined' && message) { %>
-                <div class="alert alert-info"><%= message %></div>
+                <div class="alert alert-info address-alert" role="status"><%= message %></div>
                 <% } %>
 
                 <div class="row">
                   <div class="col-md-12">
                     <div
-                      class="d-flex justify-content-between align-items-center mb-3"
+                      class="address-list-header d-flex justify-content-between align-items-center mb-3"
                     >
-                      <h5>Danh Sách Địa Chỉ</h5>
+                      <h5>
+                        Danh Sách Địa Chỉ
+                        <small class="address-count"
+                          ><%= addresses.length %>/3</small
+                        >
+                      </h5>
+                      <% if (addresses.length < 3) { %>
                       <button
+                        type="button"
                         class="btn btn-primary"
                         data-toggle="modal"
                         data-target="#editAddressModal"
                       >
                         <i class="fa fa-plus"></i> Thêm Địa Chỉ Mới
                       </button>
+                      <% } else { %>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        disabled
+                        title="Mỗi tài khoản chỉ được lưu tối đa 3 địa chỉ"
+                      >
+                        Đã đạt tối đa 3 địa chỉ
+                      </button>
+                      <% } %>
                     </div>
 
                     <!-- Danh sách địa chỉ -->
                     <% if (typeof addresses !== 'undefined' && addresses.length > 0) { %> <% for (let address of addresses) { %>
-                    <div class="card mb-3">
+                    <div class="card address-card mb-3">
                       <div class="card-body">
-                        <div class="row">
-                          <div class="col-md-8">
+                        <div class="row align-items-center">
+                          <div class="col-md-8 address-card-details">
                             <h6>
                               <strong><%= address.fullName %></strong>
                               <% if (address.isDefault) { %>
-                              <span class="badge badge-success">Mặc định</span>
+                              <span class="badge address-default-badge"
+                                >Mặc định</span
+                              >
                               <% } %>
                               <span class="badge badge-secondary"
                                 ><%= address.addressType === 'home' ? 'Nhà riêng' : address.addressType === 'office' ? 'Cơ quan' : 'Khác' %></span
@@ -422,23 +428,21 @@
                             </p>
                             <p class="mb-1">
                               <strong>Địa chỉ:</strong>
-                              <%= address.detailAddress %>, <%= address.ward %>,
-                              <%= address.district %>, <%= address.province %>
+                              <%= [address.detailAddress, address.ward, address.district, address.province].filter(Boolean).join(', ') %>
                             </p>
                             <small class="text-muted">
                               Được tạo: <%= new Date(address.createdAt).toLocaleDateString('vi-VN') %>
                             </small>
                           </div>
-                          <div class="col-md-4 text-right">
+                          <div class="col-md-4 address-card-actions">
                             <% if (!address.isDefault) { %>
                             <button
-                              class="btn btn-sm btn-outline-primary mb-2 set-default-address-btn"
+                              class="btn btn-sm btn-outline-primary set-default-address-btn"
                               data-address-id='<%= address.idAddress %>'
                             >
                               Đặt làm mặc định
                             </button>
                             <% } %>
-                            <br />
                             <button
                               class="btn btn-sm btn-outline-info mr-2"
                               onclick="editAddress('<%= address.idAddress %>', `<%= address.fullName %>`, `<%= address.phone %>`, `<%= address.province %>`, `<%= address.district %>`, `<%= address.ward %>`, `<%= address.detailAddress %>`)"
@@ -456,8 +460,9 @@
                       </div>
                     </div>
                     <% } %> <% } else { %>
-                    <div class="card">
+                    <div class="card address-empty-state">
                       <div class="card-body text-center">
+                        <i class="fa fa-map-marked-alt" aria-hidden="true"></i>
                         <p class="mb-0">Chưa có địa chỉ nào được lưu</p>
                         <button
                           class="btn btn-primary mt-2"
@@ -607,25 +612,36 @@
                             </div>
                             <div class="col-md-4">
                               <label for="district">Quận/Huyện</label>
-                              <input
+                              <select
                                 id="district"
                                 name="district"
                                 class="form-control"
-                                type="text"
-                                placeholder="Quận/Huyện"
+                                disabled
                                 required
-                              />
+                              >
+                                <option value="">Chọn Quận/Huyện</option>
+                              </select>
                             </div>
                             <div class="col-md-4">
                               <label for="ward">Phường/Xã</label>
-                              <input
+                              <select
                                 id="ward"
                                 name="ward"
                                 class="form-control"
-                                type="text"
-                                placeholder="Phường/Xã"
+                                disabled
                                 required
-                              />
+                              >
+                                <option value="">Chọn Phường/Xã</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div
+                                id="addressLocationError"
+                                class="alert alert-danger d-none"
+                                role="alert"
+                              ></div>
                             </div>
                           </div>
                           <div class="row">
@@ -904,9 +920,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Cửa Hàng</h2>
               <ul>
-                <li><a href="#">Giới thiệu</a></li>
-                <li><a href="#">Chính sách bảo mật</a></li>
-                <li><a href="#">Hình thức vận chuyển</a></li>
+                <li><a href="/thong-tin/gioi-thieu">Giới thiệu</a></li>
+                <li><a href="/thong-tin/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
+                <li><a href="/thong-tin/hinh-thuc-van-chuyen">Hình thức vận chuyển</a></li>
               </ul>
             </div>
           </div>
@@ -915,9 +931,9 @@
             <div class="footer-widget">
               <h2>Thông Tin Mua Hàng</h2>
               <ul>
-                <li><a href="#">Chính sách thanh toán</a></li>
-                <li><a href="#">Chính sách vận chuyển</a></li>
-                <li><a href="#">Chính sách hoàn trả</a></li>
+                <li><a href="/thong-tin/chinh-sach-thanh-toan">Chính sách thanh toán</a></li>
+                <li><a href="/thong-tin/chinh-sach-van-chuyen">Chính sách vận chuyển</a></li>
+                <li><a href="/thong-tin/chinh-sach-hoan-tra">Chính sách hoàn trả</a></li>
               </ul>
             </div>
           </div>
@@ -973,6 +989,180 @@
       // Global variable to track edit mode
       let isEditMode = false;
       let currentEditId = null;
+      let addressProvinces = [];
+      let currentAddressDistricts = [];
+      let pendingAddressLocation = null;
+
+      function normalizeDivisionName(name) {
+        return (name || "")
+          .trim()
+          .replace(/^(tp\.?\s+|tỉnh\s+|thành phố\s+|quận\s+|huyện\s+|thị xã\s+|phường\s+|xã\s+|thị trấn\s+)/i, "")
+          .toLocaleLowerCase("vi");
+      }
+
+      function setLocationOptions(select, items, placeholder, selectedName) {
+        select.replaceChildren(new Option(placeholder, ""));
+        let selectedOption = null;
+
+        items.forEach((item) => {
+          const option = new Option(item.value, item.value);
+          select.add(option);
+          if (
+            selectedName &&
+            normalizeDivisionName(item.value) === normalizeDivisionName(selectedName)
+          ) {
+            selectedOption = option;
+          }
+        });
+
+        if (selectedName && !selectedOption) {
+          selectedOption = new Option(selectedName, selectedName);
+          select.add(selectedOption);
+        }
+
+        select.value = selectedOption ? selectedOption.value : "";
+        select.disabled = items.length === 0;
+      }
+
+      async function loadAddressProvinces() {
+        const provinceSelect = document.getElementById("province");
+        const districtSelect = document.getElementById("district");
+        const wardSelect = document.getElementById("ward");
+        const errorElement = document.getElementById("addressLocationError");
+
+        errorElement.classList.add("d-none");
+        if (!addressProvinces.length) {
+          provinceSelect.disabled = true;
+          try {
+            const response = await fetch("https://provinces.open-api.vn/api/v1/?depth=1");
+            if (!response.ok) throw new Error("Không tải được danh sách tỉnh/thành.");
+            const provinces = await response.json();
+            addressProvinces = provinces.map((province) => ({
+              code: province.code,
+              value: province.name.replace(/^(Tỉnh|Thành phố)\s+/i, ""),
+            }));
+          } catch (error) {
+            errorElement.textContent =
+              error.message || "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại.";
+            errorElement.classList.remove("d-none");
+          } finally {
+            provinceSelect.disabled = !addressProvinces.length;
+          }
+        }
+
+        setLocationOptions(
+          provinceSelect,
+          addressProvinces,
+          "Chọn Tỉnh/Thành phố",
+          pendingAddressLocation && pendingAddressLocation.province
+        );
+        districtSelect.disabled = true;
+        wardSelect.disabled = true;
+        if (provinceSelect.value) {
+          await loadAddressDistricts(
+            pendingAddressLocation && pendingAddressLocation.district,
+            pendingAddressLocation && pendingAddressLocation.ward
+          );
+        }
+      }
+
+      async function loadAddressDistricts(selectedDistrict, selectedWard) {
+        const provinceSelect = document.getElementById("province");
+        const districtSelect = document.getElementById("district");
+        const wardSelect = document.getElementById("ward");
+        const errorElement = document.getElementById("addressLocationError");
+        const province = addressProvinces.find(
+          (item) =>
+            normalizeDivisionName(item.value) ===
+            normalizeDivisionName(provinceSelect.value)
+        );
+
+        wardSelect.replaceChildren(new Option("Chọn Phường/Xã", ""));
+        wardSelect.disabled = true;
+        if (!province) {
+          setLocationOptions(districtSelect, [], "Chọn Quận/Huyện");
+          return;
+        }
+
+        districtSelect.disabled = true;
+        errorElement.classList.add("d-none");
+        try {
+          const response = await fetch(
+            `https://provinces.open-api.vn/api/v1/p/${province.code}?depth=2`
+          );
+          if (!response.ok) throw new Error("Không tải được danh sách quận/huyện.");
+          const provinceDetails = await response.json();
+          const currentProvince = addressProvinces.find(
+            (item) =>
+              normalizeDivisionName(item.value) ===
+              normalizeDivisionName(provinceSelect.value)
+          );
+          if (!currentProvince || currentProvince.code !== province.code) return;
+          currentAddressDistricts = provinceDetails.districts.map((district) => ({
+            code: district.code,
+            value: district.name.replace(/^(Quận|Huyện|Thị xã|Thành phố)\s+/i, ""),
+          }));
+          setLocationOptions(
+            districtSelect,
+            currentAddressDistricts,
+            "Chọn Quận/Huyện",
+            selectedDistrict
+          );
+
+          if (districtSelect.value) {
+            await loadAddressWards(selectedWard);
+          }
+        } catch (error) {
+          errorElement.textContent =
+            error.message || "Không thể tải danh sách quận/huyện.";
+          errorElement.classList.remove("d-none");
+          setLocationOptions(districtSelect, [], "Chọn Quận/Huyện");
+        }
+      }
+
+      async function loadAddressWards(selectedWard) {
+        const districtSelect = document.getElementById("district");
+        const wardSelect = document.getElementById("ward");
+        const errorElement = document.getElementById("addressLocationError");
+        const district = currentAddressDistricts.find(
+          (item) =>
+            normalizeDivisionName(item.value) ===
+            normalizeDivisionName(districtSelect.value)
+        );
+
+        if (!district) {
+          setLocationOptions(wardSelect, [], "Chọn Phường/Xã");
+          return;
+        }
+
+        districtSelect.disabled = true;
+        wardSelect.disabled = true;
+        errorElement.classList.add("d-none");
+        try {
+          const response = await fetch(
+            `https://provinces.open-api.vn/api/v1/d/${district.code}?depth=2`
+          );
+          if (!response.ok) throw new Error("Không tải được danh sách phường/xã.");
+          const districtDetails = await response.json();
+          const currentDistrict = currentAddressDistricts.find(
+            (item) =>
+              normalizeDivisionName(item.value) ===
+              normalizeDivisionName(districtSelect.value)
+          );
+          if (!currentDistrict || currentDistrict.code !== district.code) return;
+          const wards = districtDetails.wards.map((ward) => ({
+            value: ward.name.replace(/^(Phường|Xã|Thị trấn)\s+/i, ""),
+          }));
+          setLocationOptions(wardSelect, wards, "Chọn Phường/Xã", selectedWard);
+        } catch (error) {
+          errorElement.textContent =
+            error.message || "Không thể tải danh sách phường/xã.";
+          errorElement.classList.remove("d-none");
+          setLocationOptions(wardSelect, [], "Chọn Phường/Xã");
+        } finally {
+          districtSelect.disabled = false;
+        }
+      }
 
       function setDefaultAddress(addressId) {
         if (confirm("Đặt địa chỉ này làm mặc định?")) {
@@ -1004,7 +1194,7 @@
             success: function (response) {
               if (response.success) {
                 alert("Đã xóa địa chỉ!");
-                location.reload();
+                window.location.href = "/users/tai-khoan#address-tab";
               } else {
                 alert(response.message || "Có lỗi xảy ra");
               }
@@ -1045,12 +1235,11 @@
         // Populate form with existing data
         $('#editAddressModal input[name="fullName"]').val(fullName);
         $('#editAddressModal input[name="phone"]').val(phone);
-        $('#editAddressModal select[name="province"]').val(province);
-        $('#editAddressModal input[name="district"]').val(district);
-        $('#editAddressModal input[name="ward"]').val(ward);
+        pendingAddressLocation = { province, district, ward };
         $('#editAddressModal textarea[name="detailAddress"]').val(
           detailAddress
         );
+        $("#addressLocationError").addClass("d-none").text("");
 
         // Show modal
         $("#editAddressModal").modal("show");
@@ -1058,15 +1247,55 @@
 
       // Handle form submission
       $(document).ready(function () {
+        $("#editAddressModal").on("shown.bs.modal", function () {
+          loadAddressProvinces();
+        });
+
+        $("#province").on("change", function () {
+          pendingAddressLocation = null;
+          currentAddressDistricts = [];
+          $("#district").val("").prop("disabled", true);
+          $("#ward").val("").prop("disabled", true);
+          $("#addressLocationError").addClass("d-none").text("");
+          loadAddressDistricts();
+        });
+
+        $("#district").on("change", function () {
+          const selectedWard =
+            pendingAddressLocation &&
+            normalizeDivisionName(pendingAddressLocation.district) ===
+              normalizeDivisionName(this.value)
+              ? pendingAddressLocation.ward
+              : "";
+          pendingAddressLocation = null;
+          $("#ward").val("").prop("disabled", true);
+          $("#addressLocationError").addClass("d-none").text("");
+          loadAddressWards(selectedWard);
+        });
+
         $("#editAddressModal form").on("submit", function (e) {
           e.preventDefault();
 
+          const phoneInput = $('input[name="phone"]');
+          let normalizedPhone = String(phoneInput.val() || "")
+            .trim()
+            .replace(/[\s().-]/g, "");
+          if (normalizedPhone.startsWith("+")) {
+            normalizedPhone = normalizedPhone.slice(1);
+          }
+          if (/^84\d{9,10}$/.test(normalizedPhone)) {
+            normalizedPhone = "0" + normalizedPhone.slice(2);
+          } else if (/^\d{9}$/.test(normalizedPhone)) {
+            normalizedPhone = "0" + normalizedPhone;
+          }
+          phoneInput.val(normalizedPhone);
+
           const formData = {
             fullName: $('input[name="fullName"]').val(),
-            phone: $('input[name="phone"]').val(),
+            phone: normalizedPhone,
             province: $('select[name="province"]').val(),
-            district: $('input[name="district"]').val(),
-            ward: $('input[name="ward"]').val(),
+            district: $('select[name="district"]').val(),
+            ward: $('select[name="ward"]').val(),
             detailAddress: $('textarea[name="detailAddress"]').val(),
           };
 
@@ -1120,13 +1349,20 @@
               data: formData,
               success: function (response) {
                 console.log("POST request success:", response);
-                alert("Thêm địa chỉ mới thành công!");
-                $("#editAddressModal").modal("hide");
-                location.reload();
+                if (!response.success) {
+                  alert(response.message || "Có lỗi xảy ra khi thêm địa chỉ mới!");
+                  return;
+                }
+
+                alert(response.message || "Thêm địa chỉ mới thành công!");
+                window.location.reload();
               },
               error: function (xhr) {
                 console.error("POST request error:", xhr);
-                alert("Có lỗi xảy ra khi thêm địa chỉ mới!");
+                alert(
+                  xhr.responseJSON?.message ||
+                    "Có lỗi xảy ra khi thêm địa chỉ mới!"
+                );
               },
             });
           }
@@ -1136,8 +1372,12 @@
         $("#editAddressModal").on("hidden.bs.modal", function () {
           isEditMode = false;
           currentEditId = null;
+          pendingAddressLocation = null;
+          currentAddressDistricts = [];
           $("#editAddressModalLabel").text("Thêm Địa Chỉ Nhận Hàng");
           this.querySelector("form").reset();
+          $("#district, #ward").prop("disabled", true);
+          $("#addressLocationError").addClass("d-none").text("");
         });
       });
 
@@ -1176,48 +1416,16 @@
         }
       }
 
-      // Set default address
-      function setDefaultAddress(addressId) {
-        $.ajax({
-          url: `/users/set-default-address/${addressId}`,
-          method: "POST",
-          success: function (response) {
-            if (response.success) {
-              alert("✅ " + response.message);
-              location.reload();
-            } else {
-              alert("❌ " + response.message);
-            }
-          },
-          error: function () {
-            alert("Có lỗi khi cập nhật địa chỉ");
-          },
-        });
-      }
-
-      // Delete address
-      function deleteAddress(addressId) {
-        if (confirm("Bạn có chắc muốn xóa địa chỉ này không?")) {
-          $.ajax({
-            url: `/users/delete-address/${addressId}`,
-            method: "POST",
-            success: function (response) {
-              if (response.success) {
-                alert("✅ " + response.message);
-                location.reload();
-              } else {
-                alert("❌ " + response.message);
-              }
-            },
-            error: function () {
-              alert("Có lỗi khi xóa địa chỉ");
-            },
-          });
-        }
-      }
-
       // Event delegation for buttons with data attributes
       document.addEventListener('DOMContentLoaded', function() {
+        const tabId = window.location.hash.slice(1);
+        const tabLink = tabId.endsWith("-tab")
+          ? document.getElementById(tabId.replace("-tab", "-nav"))
+          : null;
+        if (tabLink) {
+          $(tabLink).tab("show");
+        }
+
         // View Order Details
         document.querySelectorAll('.view-order-btn').forEach(btn => {
           btn.addEventListener('click', function() {

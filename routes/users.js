@@ -18,6 +18,17 @@ function validateEmail(email) {
   return null;
 }
 
+function normalizeAddressPhone(phone) {
+  let normalized = String(phone || "").trim().replace(/[\s().-]/g, "");
+  if (normalized.startsWith("+")) normalized = normalized.slice(1);
+  if (/^84\d{9,10}$/.test(normalized)) {
+    normalized = "0" + normalized.slice(2);
+  } else if (/^\d{9}$/.test(normalized)) {
+    normalized = "0" + normalized;
+  }
+  return normalized;
+}
+
 function validateUsername(username) {
   const re = /^[a-zA-Z0-9_]{3,20}$/;
   if (!username || typeof username !== "string")
@@ -726,11 +737,16 @@ router.post("/update-address", async function (req, res, next) {
   }
 
   let fullName = req.body.fullName;
-  let phone = req.body.phone;
+  let phone = normalizeAddressPhone(req.body.phone);
   let province = req.body.province;
   let district = req.body.district;
   let ward = req.body.ward;
   let detailAddress = req.body.detailAddress;
+  fullName = String(fullName || "").trim();
+  province = String(province || "").trim();
+  district = String(district || "").trim();
+  ward = String(ward || "").trim();
+  detailAddress = String(detailAddress || "").trim();
   let addressType = req.body.addressType || "home";
   let setAsDefault = req.body.setAsDefault === "1";
   let userId = req.session.User.id;
@@ -761,6 +777,13 @@ router.post("/update-address", async function (req, res, next) {
       ward: !ward ? "MISSING" : "OK",
       detailAddress: !detailAddress ? "MISSING" : "OK",
     });
+    if (req.xhr) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng điền đầy đủ thông tin địa chỉ",
+      });
+    }
+
     try {
       const addresses = await modelUserAddress.getAllAddresses(userId);
       return res.render("site/my-account", {
@@ -781,6 +804,13 @@ router.post("/update-address", async function (req, res, next) {
   // Validate phone number
   const phoneRegex = /^[0-9]{10,11}$/;
   if (!phoneRegex.test(phone)) {
+    if (req.xhr) {
+      return res.status(400).json({
+        success: false,
+        message: "Số điện thoại không hợp lệ",
+      });
+    }
+
     try {
       const addresses = await modelUserAddress.getAllAddresses(userId);
       return res.render("site/my-account", {
@@ -835,27 +865,45 @@ router.post("/update-address", async function (req, res, next) {
       req.session.User.address = fullAddress;
     }
 
-    // Redirect để tránh resubmission
+    if (req.xhr) {
+      return res.json({
+        success: true,
+        message: "Thêm địa chỉ thành công!",
+      });
+    }
+
     res.redirect(
       "/users/tai-khoan?message=" +
-        encodeURIComponent("Thêm địa chỉ thành công!")
+        encodeURIComponent("Thêm địa chỉ thành công!") +
+        "#address-tab"
     );
   } catch (err) {
     console.error("ERROR in POST update-address:", err);
     console.error("Error stack:", err.stack);
+    const errorMessage =
+      err.code === "ADDRESS_LIMIT_REACHED"
+        ? err.message
+        : "Có lỗi xảy ra khi cập nhật địa chỉ";
+    if (req.xhr) {
+      return res.status(err.code === "ADDRESS_LIMIT_REACHED" ? 409 : 500).json({
+        success: false,
+        message: errorMessage,
+      });
+    }
+
     try {
       const addresses = await modelUserAddress.getAllAddresses(userId);
       res.render("site/my-account", {
         user: req.session.User,
         addresses: addresses,
-        message: "Có lỗi xảy ra khi cập nhật địa chỉ",
+        message: errorMessage,
       });
     } catch (err2) {
       console.log(err2);
       res.render("site/my-account", {
         user: req.session.User,
         addresses: [],
-        message: "Có lỗi xảy ra khi cập nhật địa chỉ",
+        message: errorMessage,
       });
     }
   }
@@ -871,9 +919,14 @@ router.put("/update-address", async function (req, res, next) {
     return res.status(401).json({ success: false, message: "Chưa đăng nhập" });
   }
 
-  const { id, fullName, phone, province, district, ward, detailAddress } =
-    req.body;
+  const { id, fullName, province, district, ward, detailAddress } = req.body;
+  const phone = normalizeAddressPhone(req.body.phone);
   const userId = req.session.User.id;
+  const normalizedFullName = String(fullName || "").trim();
+  const normalizedProvince = String(province || "").trim();
+  const normalizedDistrict = String(district || "").trim();
+  const normalizedWard = String(ward || "").trim();
+  const normalizedDetailAddress = String(detailAddress || "").trim();
 
   console.log("Update params:", {
     id,
@@ -889,12 +942,12 @@ router.put("/update-address", async function (req, res, next) {
   // Validation
   if (
     !id ||
-    !fullName ||
+    !normalizedFullName ||
     !phone ||
-    !province ||
-    !district ||
-    !ward ||
-    !detailAddress
+    !normalizedProvince ||
+    !normalizedDistrict ||
+    !normalizedWard ||
+    !normalizedDetailAddress
   ) {
     console.log("ERROR: Missing required fields");
     return res
@@ -913,18 +966,22 @@ router.put("/update-address", async function (req, res, next) {
 
   try {
     const addressData = {
-      fullName,
+      fullName: normalizedFullName,
       phone,
-      province,
-      district,
-      ward,
-      detailAddress: detailAddress,
+      province: normalizedProvince,
+      district: normalizedDistrict,
+      ward: normalizedWard,
+      detailAddress: normalizedDetailAddress,
       addressType: "home",
     };
 
     console.log("Updating address with data:", addressData);
 
-    const result = await modelUserAddress.updateAddress(id, addressData);
+    const result = await modelUserAddress.updateAddress(
+      id,
+      userId,
+      addressData
+    );
     console.log("Update result:", result);
 
     res.json({ success: true, message: "Cập nhật địa chỉ thành công" });

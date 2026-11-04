@@ -93,4 +93,103 @@ router.get("/lien-he", function (req, res, next) {
   res.render("site/lien-he.ejs");
 });
 
+var informationPages = {
+  "gioi-thieu": {
+    title: "Giới thiệu",
+    intro:
+      "Helmet Store cung cấp các sản phẩm mũ bảo hiểm và phụ kiện, đồng thời hỗ trợ khách hàng trong quá trình lựa chọn và mua sắm.",
+    sections: [
+      {
+        title: "Hỗ trợ khách hàng",
+        body:
+          "Nếu cần tư vấn về sản phẩm hoặc đơn hàng, vui lòng liên hệ cửa hàng qua thông tin liên hệ ở cuối trang.",
+      },
+    ],
+  },
+  "chinh-sach-bao-mat": {
+    title: "Chính sách bảo mật",
+    intro:
+      "Helmet Store tôn trọng quyền riêng tư và chỉ sử dụng thông tin khách hàng cho các hoạt động cần thiết để phục vụ việc mua sắm.",
+    sections: [
+      {
+        title: "Thông tin được sử dụng",
+        body:
+          "Thông tin liên hệ, địa chỉ giao hàng và chi tiết đơn hàng được sử dụng để xác nhận, xử lý và hỗ trợ đơn hàng.",
+      },
+      {
+        title: "Bảo vệ thông tin",
+        body:
+          "Cửa hàng không bán thông tin cá nhân của khách hàng. Thông tin chỉ được chia sẻ với đơn vị liên quan khi cần để hoàn tất dịch vụ hoặc theo yêu cầu của pháp luật.",
+      },
+    ],
+  },
+  "hinh-thuc-van-chuyen": {
+    title: "Hình thức vận chuyển",
+    intro:
+      "Các hình thức giao hàng khả dụng sẽ được thông báo khi đặt hàng và có thể phụ thuộc vào địa chỉ nhận hàng.",
+    sections: [
+      {
+        title: "Nhận và theo dõi đơn hàng",
+        body:
+          "Vui lòng cung cấp địa chỉ và số điện thoại chính xác để cửa hàng hoặc đơn vị vận chuyển có thể liên hệ giao hàng. Thông tin giao hàng cụ thể sẽ được xác nhận sau khi đặt hàng.",
+      },
+    ],
+  },
+  "chinh-sach-thanh-toan": {
+    title: "Chính sách thanh toán",
+    intro:
+      "Các phương thức thanh toán đang được hỗ trợ sẽ hiển thị tại bước thanh toán hoặc được cửa hàng xác nhận khi tiếp nhận đơn hàng.",
+    sections: [
+      {
+        title: "Xác nhận thanh toán",
+        body:
+          "Vui lòng kiểm tra tổng giá trị đơn hàng và phương thức thanh toán trước khi xác nhận. Với thanh toán trực tuyến, hãy làm theo hướng dẫn của cổng thanh toán được hiển thị trên trang.",
+      },
+    ],
+  },
+  "chinh-sach-van-chuyen": {
+    title: "Chính sách vận chuyển",
+    intro:
+      "Cửa hàng tiếp nhận và xử lý đơn hàng theo thông tin nhận hàng do khách cung cấp.",
+    sections: [
+      {
+        title: "Phí và thời gian giao hàng",
+        body:
+          "Phí giao hàng và thời gian dự kiến có thể thay đổi theo địa chỉ, phương thức giao hàng và tình trạng đơn. Thông tin áp dụng sẽ được thông báo khi đặt hàng hoặc xác nhận đơn.",
+      },
+      {
+        title: "Khi nhận hàng",
+        body:
+          "Vui lòng kiểm tra tình trạng kiện hàng khi nhận và liên hệ cửa hàng nếu phát hiện vấn đề với đơn hàng.",
+      },
+    ],
+  },
+  "chinh-sach-hoan-tra": {
+    title: "Chính sách hoàn trả",
+    intro:
+      "Nếu sản phẩm hoặc đơn hàng có vấn đề, khách hàng vui lòng liên hệ cửa hàng để được hướng dẫn kiểm tra và xử lý.",
+    sections: [
+      {
+        title: "Yêu cầu hỗ trợ",
+        body:
+          "Khi liên hệ, vui lòng cung cấp mã đơn hàng, thông tin sản phẩm và mô tả tình trạng gặp phải. Cửa hàng sẽ xem xét tình trạng sản phẩm và hướng dẫn phương án phù hợp theo quy định áp dụng.",
+      },
+      {
+        title: "Giữ lại thông tin đơn hàng",
+        body:
+          "Vui lòng giữ lại sản phẩm, bao bì và chứng từ liên quan trong thời gian chờ hướng dẫn xử lý.",
+      },
+    ],
+  },
+};
+
+router.get("/thong-tin/:slug", function (req, res, next) {
+  var page = informationPages[req.params.slug];
+  if (!page) return next();
+  if (req.params.slug === "gioi-thieu") {
+    return res.render("site/gioi-thieu");
+  }
+  res.render("site/thong-tin", { page: page });
+});
+
 module.exports = router;
