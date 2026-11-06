@@ -240,11 +240,18 @@ async function issuePasswordResetOtp(userId, email, config) {
 
   try {
     const transporter = nodemailer.createTransport({
-      host: config.host,
-      port: config.port,
-      secure: config.port === 465,
-      auth: { user: config.user, pass: config.pass },
-    });
+  host: config.host,
+  port: Number(config.port) || 587,
+  secure: Number(config.port) === 465,
+  auth: {
+    user: config.user,
+    pass: config.pass,
+  },
+  requireTLS: Number(config.port) === 587,
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 30000,
+});
     await transporter.sendMail({
       from: config.from,
       to: email,
