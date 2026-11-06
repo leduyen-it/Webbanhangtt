@@ -1,0 +1,82 @@
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Tin nhắn liên hệ</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+            <li class="breadcrumb-item active">Tin nhắn liên hệ</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+      <% if (replySent) { %>
+        <div class="alert alert-success" role="status">Đã gửi email trả lời cho khách hàng.</div>
+      <% } %>
+      <% if (replyError) { %>
+        <div class="alert alert-danger" role="alert"><%= replyError %></div>
+      <% } %>
+      <% if (updated) { %>
+        <div class="alert alert-success" role="status">Đã cập nhật trạng thái tin nhắn.</div>
+      <% } %>
+      <% if (messages.length === 0) { %>
+        <div class="card">
+          <div class="card-body text-center text-muted">Chưa có tin nhắn liên hệ nào.</div>
+        </div>
+      <% } %>
+      <% messages.forEach(function(message) { %>
+        <div class="card <%= message.isRead ? '' : 'card-primary card-outline' %>">
+          <div class="card-header">
+            <h3 class="card-title">
+              <%= message.subject %>
+              <% if (!message.isRead) { %><span class="badge badge-primary ml-2">Mới</span><% } %>
+            </h3>
+            <div class="card-tools text-muted">
+              <%= message.createdAt ? new Date(message.createdAt).toLocaleString('vi-VN') : '' %>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="mb-2">
+              <strong><%= message.senderName %></strong>
+              &lt;<a href="mailto:<%= message.senderEmail %>"><%= message.senderEmail %></a>&gt;
+            </p>
+            <div style="white-space: pre-wrap; overflow-wrap: anywhere;"><%= message.message %></div>
+          </div>
+          <div class="card-footer">
+            <form action="/admin/messages/<%= message.idMessage %>/reply" method="post">
+              <div class="form-group">
+                <label for="reply-<%= message.idMessage %>">Gửi trả lời qua email</label>
+                <textarea
+                  id="reply-<%= message.idMessage %>"
+                  name="reply"
+                  class="form-control"
+                  rows="3"
+                  maxlength="5000"
+                  placeholder="Nhập nội dung trả lời..."
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="fas fa-paper-plane"></i> Gửi trả lời
+              </button>
+            </form>
+            <% if (!message.isRead) { %>
+              <form class="mt-2" action="/admin/messages/<%= message.idMessage %>/read" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                  <i class="fas fa-check"></i> Đánh dấu đã đọc
+                </button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </section>
+</div>

@@ -6,6 +6,7 @@ var ejs = require("ejs");
 var path = require("path");
 var multer = require("multer");
 var fs = require("fs");
+var nodemailer = require("nodemailer");
 
 // Cấu hình multer để upload ảnh
 const storage = multer.diskStorage({
@@ -797,6 +798,132 @@ router.get("/reviews", async function (req, res, next) {
       reviews: reviews,
       user: req.session.User,
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/messages", async function (req, res, next) {
+  try {
+    const messages = await db.query(
+      `SELECT idMessage, senderName, senderEmail, subject, message, isRead, createdAt
+       FROM contact_messages
+       ORDER BY isRead ASC, createdAt DESC, idMessage DESC`
+    );
+    renderWithLayout(res, "admin/messages", {
+      messages,
+      updated: req.query.updated === "1",
+      replySent: req.query.reply === "sent",
+      replyError:
+        req.query.reply === "error"
+          ? "Không thể gửi email trả lời. Vui lòng kiểm tra cấu hình SMTP trong Render và thử lại."
+          : "",
+      user: req.session.User,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/messages/:id/reply", async function (req, res, next) {
+  const messageId = Number(req.params.id);
+  const replyText =
+    typeof req.body.reply === "string" ? req.body.reply.trim() : "";
+  if (!Number.isInteger(messageId) || messageId <= 0) {
+    return res.status(400).send("Mã tin nhắn không hợp lệ");
+  }
+  if (!replyText || replyText.length > 5000) {
+    return res.redirect("/admin/messages?reply=error");
+  }
+
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
+  const smtpPort = Number(SMTP_PORT);
+  if (
+    !SMTP_HOST ||
+    !SMTP_USER ||
+    !SMTP_PASS ||
+    !SMTP_FROM ||
+    !Number.isInteger(smtpPort) ||
+    smtpPort < 1 ||
+    smtpPort > 65535
+  ) {
+    console.error("Contact reply email failed: SMTP configuration is incomplete");
+    return res.redirect("/admin/messages?reply=error");
+  }
+
+  let contactMessage;
+  try {
+    const messages = await db.query(
+      `SELECT senderName, senderEmail, subject
+       FROM contact_messages
+       WHERE idMessage = ?
+       LIMIT 1`,
+      [messageId]
+    );
+    contactMessage = messages[0];
+  } catch (err) {
+    return next(err);
+  }
+  if (!contactMessage) {
+    return res.status(404).send("Không tìm thấy tin nhắn");
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactMessage.senderEmail || "")) {
+    console.error("Contact reply email failed: invalid recipient address");
+    return res.redirect("/admin/messages?reply=error");
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: smtpPort,
+    secure: smtpPort === 465,
+    requireTLS: smtpPort === 587,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 30000,
+  });
+  try {
+    await transporter.sendMail({
+      from: SMTP_FROM,
+      to: contactMessage.senderEmail,
+      replyTo: SMTP_USER,
+      subject: `Re: ${contactMessage.subject}`,
+      text: `Xin chào ${contactMessage.senderName},\n\n${replyText}\n\nTrân trọng,\nHelmet Store`,
+    });
+  } catch (err) {
+    console.error("Contact reply email failed:", err.code || "SMTP error");
+    return res.redirect("/admin/messages?reply=error");
+  }
+
+  try {
+    await db.query(
+      "UPDATE contact_messages SET isRead = 1 WHERE idMessage = ?",
+      [messageId]
+    );
+  } catch (err) {
+    console.error(
+      "Contact reply sent, but message read status update failed:",
+      err.code || "database error"
+    );
+  }
+  return res.redirect("/admin/messages?reply=sent");
+});
+
+router.post("/messages/:id/read", async function (req, res, next) {
+  const messageId = Number(req.params.id);
+  if (!Number.isInteger(messageId) || messageId <= 0) {
+    return res.status(400).send("Mã tin nhắn không hợp lệ");
+  }
+
+  try {
+    const result = await db.query(
+      "UPDATE contact_messages SET isRead = 1 WHERE idMessage = ?",
+      [messageId]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).send("Không tìm thấy tin nhắn");
+    }
+    res.redirect("/admin/messages?updated=1");
   } catch (err) {
     next(err);
   }

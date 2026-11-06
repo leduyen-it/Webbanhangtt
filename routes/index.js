@@ -5,7 +5,33 @@ var modelUser = require("../models/model_user");
 var modelProduct = require("../models/model_product");
 var modelCart = require("../models/model_cart");
 var modelWishlist = require("../models/model_wishlist");
+var db = require("../models/database");
 var router = express.Router();
+var contactMessagesTableReady;
+
+function ensureContactMessagesTable() {
+  if (!contactMessagesTableReady) {
+    contactMessagesTableReady = db
+      .query(
+        `CREATE TABLE IF NOT EXISTS contact_messages (
+          idMessage int(11) NOT NULL AUTO_INCREMENT,
+          senderName varchar(100) NOT NULL,
+          senderEmail varchar(254) NOT NULL,
+          subject varchar(200) NOT NULL,
+          message text NOT NULL,
+          isRead tinyint(1) NOT NULL DEFAULT 0,
+          createdAt timestamp NOT NULL DEFAULT current_timestamp(),
+          PRIMARY KEY (idMessage),
+          KEY idx_contact_messages_unread (isRead, createdAt)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci`
+      )
+      .catch((error) => {
+        contactMessagesTableReady = null;
+        throw error;
+      });
+  }
+  return contactMessagesTableReady;
+}
 
 /* GET home page. */
 router.get("/", async function (req, res, next) {
@@ -90,7 +116,82 @@ router.get("/thanh-toan", async function (req, res, next) {
 });
 // Wishlist route moved to /wishlist route file
 router.get("/lien-he", function (req, res, next) {
-  res.render("site/lien-he.ejs");
+  res.render("site/lien-he.ejs", {
+    contactMessage:
+      req.query.sent === "1"
+        ? "Tin nhắn của bạn đã được gửi. Cảm ơn bạn đã liên hệ!"
+        : "",
+    contactMessageType: "success",
+    contactForm: {},
+  });
+});
+
+router.post("/lien-he", async function (req, res, next) {
+  const contactForm = {
+    name: typeof req.body.name === "string" ? req.body.name.trim() : "",
+    email: typeof req.body.email === "string" ? req.body.email.trim() : "",
+    subject: typeof req.body.subject === "string" ? req.body.subject.trim() : "",
+    message:
+      typeof req.body.message === "string" ? req.body.message.trim() : "",
+  };
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let validationMessage = "";
+
+  if (
+    !contactForm.name ||
+    !contactForm.email ||
+    !contactForm.subject ||
+    !contactForm.message
+  ) {
+    validationMessage = "Vui lòng điền đầy đủ các thông tin.";
+  } else if (
+    contactForm.name.length > 100 ||
+    contactForm.email.length > 254 ||
+    contactForm.subject.length > 200 ||
+    contactForm.message.length > 5000
+  ) {
+    validationMessage = "Một hoặc nhiều nội dung vượt quá độ dài cho phép.";
+  } else if (!emailPattern.test(contactForm.email)) {
+    validationMessage = "Địa chỉ email không hợp lệ.";
+  }
+
+  if (validationMessage) {
+    return res.status(400).render("site/lien-he.ejs", {
+      contactMessage: validationMessage,
+      contactMessageType: "danger",
+      contactForm,
+    });
+  }
+
+  try {
+    await ensureContactMessagesTable();
+    await db.query(
+      `INSERT INTO contact_messages (senderName, senderEmail, subject, message)
+       VALUES (?, ?, ?, ?)`,
+      [
+        contactForm.name,
+        contactForm.email,
+        contactForm.subject,
+        contactForm.message,
+      ]
+    );
+    res.redirect("/lien-he?sent=1");
+  } catch (error) {
+    console.error(
+      "Contact message submission failed:",
+      error.code || "database error"
+    );
+    const contactErrorMessage =
+      error.code === "ER_DBACCESS_DENIED_ERROR" ||
+      error.code === "ER_TABLEACCESS_DENIED_ERROR"
+        ? "Database chưa có bảng hoặc chưa được cấp quyền lưu tin nhắn. Hãy chạy contact_messages_migration.sql trên database production."
+        : "Hiện chưa thể gửi tin nhắn. Vui lòng thử lại sau hoặc liên hệ cửa hàng qua email.";
+    res.status(503).render("site/lien-he.ejs", {
+      contactMessage: contactErrorMessage,
+      contactMessageType: "danger",
+      contactForm,
+    });
+  }
 });
 
 var informationPages = {

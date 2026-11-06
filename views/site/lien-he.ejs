@@ -61,13 +61,24 @@
                             <%- include("partials/navigation-other-pages", { currentPath: typeof currentPath === "undefined" ? "" : currentPath }) %>
                         </div>
                         <div class="navbar-nav ml-auto">
+                            <% if (user) { %>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <%= user.username %></a>
+                                <div class="dropdown-menu">
+                                    <a href="/users/tai-khoan" class="dropdown-item">Tài khoản của tôi</a>
+                                    <a href="/orders" class="dropdown-item">Đơn hàng</a>
+                                    <a href="/users/dang-xuat" class="dropdown-item">Đăng xuất</a>
+                                </div>
+                            </div>
+                            <% } else { %>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tài khoản</a>
                                 <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item">Đăng nhập</a>
-                                    <a href="#" class="dropdown-item">Đăng ký</a>
+                                    <a href="/users/dang-nhap" class="dropdown-item">Đăng nhập</a>
+                                    <a href="/users/dang-ky" class="dropdown-item">Đăng ký</a>
                                 </div>
                             </div>
+                            <% } %>
                         </div>
                     </div>
                 </nav>
@@ -158,20 +169,23 @@
                     <div class="col-lg-4">
                         <div class="contact-form">
                             <h4 class="mb-4">Gửi tin nhắn cho chúng tôi</h4>
-                            <form>
+                            <% if (contactMessage) { %>
+                                <div class="alert alert-<%= contactMessageType %>" role="status"><%= contactMessage %></div>
+                            <% } %>
+                            <form action="/lien-he" method="post">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Họ và tên" />
+                                        <input type="text" class="form-control" name="name" placeholder="Họ và tên" maxlength="100" autocomplete="name" required value="<%= contactForm.name || '' %>" />
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="email" class="form-control" placeholder="Email của bạn" />
+                                        <input type="email" class="form-control" name="email" placeholder="Email của bạn" maxlength="254" autocomplete="email" required value="<%= contactForm.email || '' %>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Chủ đề" />
+                                    <input type="text" class="form-control" name="subject" placeholder="Chủ đề" maxlength="200" required value="<%= contactForm.subject || '' %>" />
                                 </div>
                                 <div class="form-group">
-                                    <textarea class="form-control" rows="5" placeholder="Nội dung tin nhắn"></textarea>
+                                    <textarea class="form-control" name="message" rows="5" maxlength="5000" placeholder="Nội dung tin nhắn" required><%= contactForm.message || '' %></textarea>
                                 </div>
                                 <div><button class="btn" type="submit">Gửi tin nhắn</button></div>
                             </form>
