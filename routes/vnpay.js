@@ -134,9 +134,9 @@ router.post('/create_payment_url', async function (req, res, next) {
     const orderId = orderResult.orderId;
 
     // Tạo các tham số cho VNPay
-    const date = new Date();
-    const createDate = moment(date).format('YYYYMMDDHHmmss');
-    const expireDate = moment(date).add(15, 'minutes').format('YYYYMMDDHHmmss'); // Thêm expire date
+    const createAt = moment().utcOffset(7);
+    const createDate = createAt.format('YYYYMMDDHHmmss');
+    const expireDate = createAt.clone().add(15, 'minutes').format('YYYYMMDDHHmmss');
     
     // Lấy IP address và convert IPv6 sang IPv4 nếu cần
     const forwardedFor = req.headers['x-forwarded-for'];
