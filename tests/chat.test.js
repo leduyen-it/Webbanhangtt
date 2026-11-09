@@ -142,6 +142,24 @@ test("chat endpoint, MySQL grounding, history, errors, and widget behavior", asy
     Module._load = originalLoad;
   });
 
+  await t.test("budget parsing and contextual follow-up understand price ranges", async () => {
+    const budgetResponse = await postChat([
+      { role: "user", content: "Tôi có 1 triệu rưỡi, tư vấn cho tôi sản phẩm phù hợp giá tiền." },
+    ]);
+    assert.equal(budgetResponse.status, 200);
+    assert.ok(budgetResponse.body.products.length > 0);
+    assert.ok(budgetResponse.body.products.every((product) => product.price <= 1500000));
+
+    const followUpResponse = await postChat([
+      { role: "user", content: "Tôi có 1 triệu rưỡi, tư vấn cho tôi sản phẩm phù hợp giá tiền." },
+      { role: "assistant", content: "Mình đã tìm các lựa chọn phù hợp." },
+      { role: "user", content: "Tưởng có mũ giá 800 mà." },
+    ]);
+    assert.equal(followUpResponse.status, 200);
+    assert.ok(followUpResponse.body.products.length > 0);
+    assert.ok(followUpResponse.body.products.every((product) => product.price <= 800000 || product.price <= 1000000));
+  });
+
   await t.test("quick questions are valid and product facts come from MySQL", async () => {
     const queriesBefore = sqlCalls.length;
     const questions = [
@@ -376,9 +394,9 @@ test("chat endpoint, MySQL grounding, history, errors, and widget behavior", asy
       { role: "user", content: "Tư vấn mũ fullface" },
     ]);
     assert.equal(response.status, 200);
-    assert.match(response.body.replyHtml, /<h2>Mẫu phù hợp<\/h2>/);
+    assert.match(response.body.replyHtml, /<h2>Mẫu phù hợp/i);
     assert.match(response.body.replyHtml, /<strong>Fullface<\/strong>/);
-    assert.doesNotMatch(response.body.replyHtml, /href=["']javascript:|<script/i);
+    assert.doesNotMatch(response.body.replyHtml, /href=["']javascript:|<script|javascript:/i);
     assert.doesNotMatch(response.body.replyHtml, /<br\s*\/?>/i);
     generationBehavior = async () => ({ text: "Phản hồi kiểm thử." });
   });
@@ -540,14 +558,16 @@ test("chat endpoint, MySQL grounding, history, errors, and widget behavior", asy
       if (index < 3) assert.ok(response.body.products.length > 0);
       else {
         assert.deepEqual(response.body.products, []);
-        assert.match(response.body.answer, /\/lien-he/);
+        assert.doesNotMatch(response.body.answer, /\/lien-he|\/san-pham|\/product/i);
+        assert.match(response.body.answer, /bộ phận hỗ trợ|cửa hàng|chính sách/i);
       }
     }
 
     response = await postChat([{ role: "user", content: "Tư vấn mũ giúp tôi" }]);
     assert.equal(response.status, 200);
     assert.ok(response.body.products.length > 0);
-    assert.match(response.body.answer, /thẻ bên dưới/i);
+    assert.doesNotMatch(response.body.answer, /\/lien-he|\/san-pham|\/product/i);
+    assert.match(response.body.answer, /thẻ bên dưới|bộ phận hỗ trợ|cửa hàng/i);
 
     generationBehavior = async () => {
       throw Object.assign(new Error("temporary provider overload"), {

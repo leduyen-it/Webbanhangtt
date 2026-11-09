@@ -17,7 +17,9 @@
   launcher.setAttribute("aria-label", "Mở chat Helmet Store AI");
   launcher.setAttribute("aria-controls", "hsChatPanel");
   launcher.setAttribute("aria-expanded", "false");
-  launcher.innerHTML = '<i class="fas fa-comments" aria-hidden="true"></i>';
+  launcher.setAttribute("data-tooltip", "Trợ lý AI");
+  launcher.title = "Trợ lý AI";
+  launcher.innerHTML = "<span class=\"hs-chat-launcher-inner\" aria-hidden=\"true\"><img class=\"hs-chat-launcher-robot\" src=\"/images/Chatbot.jpg\" alt=\"Chatbot AI\" /></span><span class=\"hs-chat-launcher-badge\">AI</span>";
 
   var panel = document.createElement("section");
   panel.className = "hs-chat-panel";
@@ -28,15 +30,23 @@
   panel.innerHTML =
     '<header class="hs-chat-header">' +
       '<div class="hs-chat-heading">' +
-        '<div class="hs-chat-avatar"><i class="fas fa-robot" aria-hidden="true"></i></div>' +
-        '<div><p class="hs-chat-title">Helmet Store AI</p><span class="hs-chat-subtitle">Tư vấn sản phẩm mũ bảo hiểm</span></div>' +
+        '<div class="hs-chat-avatar">' +
+          '<img src="/images/Chatbot.jpg" alt="Helmet Store AI" class="hs-chat-avatar-image" />' +
+        '</div>' +
+        '<div class="hs-chat-meta">' +
+          '<p class="hs-chat-title">Helmet Store AI</p>' +
+          '<span class="hs-chat-subtitle"><span class="hs-chat-status-dot"></span>Đang trực tuyến</span>' +
+        '</div>' +
       '</div>' +
-      '<button type="button" class="hs-chat-close" aria-label="Đóng chat">&times;</button>' +
+      '<div class="hs-chat-header-actions">' +
+        '<span class="hs-chat-header-label">Trợ lý AI</span>' +
+        '<button type="button" class="hs-chat-close" aria-label="Đóng chat">&times;</button>' +
+      '</div>' +
     '</header>' +
     '<div class="hs-chat-messages" aria-live="polite" aria-relevant="additions text"></div>' +
     '<form class="hs-chat-compose">' +
       '<textarea class="hs-chat-input" rows="1" maxlength="1500" aria-label="Nội dung tin nhắn" placeholder="Nhập câu hỏi của bạn..."></textarea>' +
-      '<button class="hs-chat-send" type="submit" aria-label="Gửi tin nhắn"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>' +
+      '<button class="hs-chat-send" type="submit" aria-label="Gửi tin nhắn"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.3 12.6 20.2 4a1.15 1.15 0 0 1 1.6 1.4l-4.4 14.8a1.15 1.15 0 0 1-2.1.2l-2.6-6.1-6.1-2.6a1.15 1.15 0 0 1 .2-2.1Zm2.8 0 5.9 2.5 2.4-2.4-8.3-2.1Z" fill="currentColor"/></svg></button>' +
     '</form>' +
     '<div class="hs-chat-note">Không gửi mật khẩu, OTP hoặc thông tin thanh toán.</div>';
 
@@ -54,6 +64,15 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
+  function sanitizeDisplayedText(text) {
+    return String(text || "")
+      .replace(/https?:\/\/[^\s)\]]+/gi, " ")
+      .replace(/\[[^\]]+\]\((?:\/|https?:\/\/)[^)]+\)/gi, " ")
+      .replace(/(?:^|[\s(])\/(?:san-pham|product|lien-he|gio-hang|dang-nhap|tai-khoan|checkout|cart|account)(?:[/?#][^\s)\]]+)?/gi, " ")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
+
   function appendSafeHtml(container, html) {
     var parser = new DOMParser();
     var parsed = parser.parseFromString(String(html || ""), "text/html");
@@ -66,7 +85,8 @@
     function copyNodes(source, target) {
       Array.prototype.forEach.call(source.childNodes, function (node) {
         if (node.nodeType === Node.TEXT_NODE) {
-          target.appendChild(document.createTextNode(node.textContent));
+          var sanitized = sanitizeDisplayedText(node.textContent);
+          if (sanitized) target.appendChild(document.createTextNode(sanitized));
           return;
         }
         if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -77,6 +97,12 @@
         var element = document.createElement(node.tagName.toLowerCase());
         if (node.tagName === "A") {
           var href = node.getAttribute("href") || "";
+          var isInternalRoute = /^(?:\/|https?:\/\/[^/]+\/)(?:san-pham|product|lien-he|gio-hang|dang-nhap|tai-khoan|checkout|cart|account)(?:[/?#]|$)/i.test(href);
+          if (isInternalRoute) {
+            var routeText = sanitizeDisplayedText(node.textContent || "");
+            if (routeText) target.appendChild(document.createTextNode(routeText));
+            return;
+          }
           try {
             var link = new URL(href, window.location.origin);
             if (
@@ -95,7 +121,7 @@
           }
         }
         copyNodes(node, element);
-        target.appendChild(element);
+        if (element.childNodes.length) target.appendChild(element);
       });
     }
 
@@ -237,6 +263,17 @@
   }
 
   function addMessage(role, content, isError, replyHtml, products) {
+    var row = document.createElement("div");
+    row.className = "hs-chat-row hs-chat-row--" + role;
+
+    if (role === "assistant") {
+      var avatar = document.createElement("div");
+      avatar.className = "hs-chat-message-avatar";
+      avatar.innerHTML =
+        '<img src="/images/Chatbot.jpg" alt="Helmet Store AI" class="hs-chat-message-avatar-image" />';
+      row.appendChild(avatar);
+    }
+
     var bubble = document.createElement("div");
     bubble.className =
       "hs-chat-message hs-chat-message--" +
@@ -247,28 +284,41 @@
     } else {
       bubble.textContent = content;
     }
+
     if (role === "assistant") {
       var response = document.createElement("div");
       response.className = "hs-chat-response";
       response.appendChild(bubble);
       appendProductCards(response, products);
-      messages.appendChild(response);
+      row.appendChild(response);
     } else {
-      messages.appendChild(bubble);
+      row.appendChild(bubble);
     }
+
+    messages.appendChild(row);
     scrollToLatest();
     return bubble;
   }
 
   function showTyping() {
+    var row = document.createElement("div");
+    row.className = "hs-chat-row hs-chat-row--assistant";
+
+    var avatar = document.createElement("div");
+    avatar.className = "hs-chat-message-avatar";
+    avatar.innerHTML =
+      '<img src="/images/Chatbot.jpg" alt="Helmet Store AI" class="hs-chat-message-avatar-image" />';
+    row.appendChild(avatar);
+
     var bubble = document.createElement("div");
-    bubble.className = "hs-chat-message hs-chat-message--assistant";
+    bubble.className = "hs-chat-message hs-chat-message--assistant hs-chat-message--typing";
     bubble.setAttribute("aria-label", "AI đang trả lời");
     bubble.innerHTML =
       '<span class="hs-chat-typing"><span></span><span></span><span></span></span>';
-    messages.appendChild(bubble);
+    row.appendChild(bubble);
+    messages.appendChild(row);
     scrollToLatest();
-    return bubble;
+    return row;
   }
 
   function saveHistory() {
@@ -293,8 +343,10 @@
   [
     ["fa-hard-hat", "Tư vấn chọn mũ bảo hiểm"],
     ["fa-tags", "Tìm mũ theo mức giá"],
-    ["fa-box-open", "Kiểm tra sản phẩm còn hàng"],
+    ["fa-box-open", "Sản phẩm bán chạy"],
     ["fa-truck", "Chính sách giao hàng và đổi trả"],
+    ["fa-boxes", "Kiểm tra sản phẩm còn hàng"],
+    ["fa-search", "Tra cứu đơn hàng"],
   ].forEach(function (item) {
     var question = document.createElement("button");
     question.className = "hs-chat-suggestion";
@@ -346,6 +398,8 @@
   function setOpen(open) {
     panel.hidden = !open;
     launcher.setAttribute("aria-expanded", String(open));
+    launcher.classList.toggle("is-open", open);
+    panel.classList.toggle("is-open", open);
     launcher.setAttribute(
       "aria-label",
       open ? "Đóng chat Helmet Store AI" : "Mở chat Helmet Store AI"
@@ -391,6 +445,7 @@
       }
       var answer =
         result && typeof result.answer === "string" ? result.answer.trim() : "";
+      answer = answer.replace(/https?:\/\/[^\s)\]]+/gi, " ").replace(/\[[^\]]+\]\((?:\/|https?:\/\/)[^)]+\)/gi, " ").replace(/(?:^|[\s(])\/(?:san-pham|product|lien-he|gio-hang|dang-nhap|tai-khoan|checkout|cart|account)(?:[/?#][^\s)\]]+)?/gi, " ").replace(/\s{2,}/g, " ").trim();
       if (!answer) {
         addMessage(
           "assistant",
@@ -420,7 +475,7 @@
       typing.remove();
       addMessage(
         "assistant",
-        "Không kết nối được với trợ lý lúc này. Vui lòng thử lại hoặc liên hệ cửa hàng tại /lien-he.",
+        "Không kết nối được với trợ lý lúc này. Vui lòng thử lại hoặc liên hệ bộ phận hỗ trợ của cửa hàng.",
         true
       );
       history.pop();
