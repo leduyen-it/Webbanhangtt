@@ -782,7 +782,15 @@ router.post(
       }
 
       // Cập nhật trạng thái đơn hàng
-      await modelOrder.updateOrderStatus(orderId, status);
+      const normalizedStatus = String(status).toLowerCase();
+      await modelOrder.updateOrderStatus(orderId, status, null, {
+        title: `Cập nhật đơn hàng #${orderId}`,
+        message: `Đơn hàng của bạn hiện ở trạng thái: ${getStatusText(
+          normalizedStatus
+        )}.`,
+        type: "order_status",
+        eventKey: `order_status:${orderId}:${normalizedStatus}`,
+      });
 
       req.session.message = {
         type: "success",

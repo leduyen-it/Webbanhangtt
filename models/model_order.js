@@ -1,4 +1,5 @@
 var db = require("./database");
+var modelNotification = require("./model_notification");
 
 // Hàm kiểm tra ID hợp lệ (số nguyên dương)
 function validateId(id) {
@@ -157,21 +158,38 @@ exports.createOrder = (orderData) => {
                   });
                 }
 
-                connection.commit((err) => {
-                  if (err) {
-                    return connection.rollback(() => {
+                modelNotification
+                  .createForConnection(connection, {
+                    userId: idUser,
+                    title: `Đặt hàng thành công #${orderId}`,
+                    message: `Đơn hàng #${orderId} đã được ghi nhận. Nhấn để xem chi tiết và theo dõi trạng thái.`,
+                    type: "order_created",
+                    relatedId: orderId,
+                    eventKey: `order_created:${orderId}`,
+                  })
+                  .then(() => {
+                    connection.commit((err) => {
+                      if (err) {
+                        return connection.rollback(() => {
+                          connection.release();
+                          reject(err);
+                        });
+                      }
+
                       connection.release();
-                      reject(err);
+                      resolve({
+                        orderId,
+                        message: "Order created successfully",
+                        orderItems: itemsResult.affectedRows,
+                      });
                     });
-                  }
-                  
-                  connection.release();
-                  resolve({
-                    orderId,
-                    message: "Order created successfully",
-                    orderItems: itemsResult.affectedRows,
+                  })
+                  .catch((notificationError) => {
+                    connection.rollback(() => {
+                      connection.release();
+                      reject(notificationError);
+                    });
                   });
-                });
               });
             }
           );
@@ -462,6 +480,15 @@ module.exports.createCODOrder = function (orderData, cartItems) {
         });
       });
 
+      await modelNotification.createForConnection(connection, {
+        userId: userId,
+        title: `Đặt hàng thành công #${orderId}`,
+        message: `Đơn hàng #${orderId} đã được ghi nhận và đang chờ cửa hàng xác nhận.`,
+        type: "order_created",
+        relatedId: orderId,
+        eventKey: `order_created:${orderId}`,
+      });
+
       // Commit transaction
       await new Promise((resolve, reject) => {
         connection.commit((err) => {
@@ -520,9 +547,125 @@ module.exports.getUserOrders = function (userId) {
 };
 
 // Cập nhật trạng thái đơn hàng; tùy chọn lưu thông tin giao dịch nếu schema hỗ trợ.
-exports.updateOrderStatus = async (orderId, newStatus, transactionNo = null) => {
+exports.updateOrderStatus = async (
+  orderId,
+  newStatus,
+  transactionNo = null,
+  notification = null
+) => {
   const validatedOrderId = validateId(orderId);
   const validatedStatus = validateStatus(newStatus);
+
+  if (notification) {
+    let connection;
+    try {
+      connection = await new Promise((resolve, reject) => {
+        db.getConnection((error, conn) => {
+          if (error) return reject(error);
+          resolve(conn);
+        });
+      });
+
+      await new Promise((resolve, reject) => {
+        connection.beginTransaction((error) => {
+          if (error) return reject(error);
+          resolve();
+        });
+      });
+
+      const currentOrders = await new Promise((resolve, reject) => {
+        connection.query(
+          "SELECT idUser, status FROM orders WHERE idOrder = ? FOR UPDATE",
+          [validatedOrderId],
+          (error, rows) => {
+            if (error) return reject(error);
+            resolve(rows);
+          }
+        );
+      });
+      if (!currentOrders.length) {
+        throw new Error("Order not found");
+      }
+
+      const currentStatus = String(currentOrders[0].status || "").toLowerCase();
+      if (currentStatus !== validatedStatus) {
+        const columns = await new Promise((resolve, reject) => {
+          connection.query("SHOW COLUMNS FROM orders", (error, rows) => {
+            if (error) return reject(error);
+            resolve(rows);
+          });
+        });
+        const availableColumns = new Set(
+          columns.map((column) => column.Field)
+        );
+        const assignments = ["status = ?"];
+        const params = [validatedStatus];
+
+        if (availableColumns.has("paymentStatus")) {
+          assignments.push("paymentStatus = ?");
+          params.push(
+            validatedStatus === "paid"
+              ? "paid"
+              : validatedStatus === "failed"
+                ? "failed"
+                : "unpaid"
+          );
+        }
+        if (availableColumns.has("transactionNo") && validatedStatus === "paid") {
+          assignments.push("transactionNo = ?");
+          params.push(transactionNo);
+        }
+        if (availableColumns.has("updatedAt")) {
+          assignments.push("updatedAt = CURRENT_TIMESTAMP");
+        }
+
+        params.push(validatedOrderId);
+        await new Promise((resolve, reject) => {
+          connection.query(
+            `UPDATE orders SET ${assignments.join(", ")} WHERE idOrder = ?`,
+            params,
+            (error, result) => {
+              if (error) return reject(error);
+              if (result.affectedRows === 0) {
+                return reject(new Error("Order not found"));
+              }
+              resolve();
+            }
+          );
+        });
+
+        await modelNotification.createForConnection(connection, {
+          userId: currentOrders[0].idUser,
+          title: notification.title,
+          message: notification.message,
+          type: notification.type,
+          relatedId: validatedOrderId,
+          eventKey: notification.eventKey,
+        });
+      }
+
+      await new Promise((resolve, reject) => {
+        connection.commit((error) => {
+          if (error) return reject(error);
+          resolve();
+        });
+      });
+      return {
+        success: true,
+        message: `Cập nhật trạng thái đơn hàng thành công: ${validatedStatus}`,
+      };
+    } catch (error) {
+      if (connection) {
+        await new Promise((resolve) => {
+          connection.rollback(() => resolve());
+        });
+      }
+      throw error;
+    } finally {
+      if (connection) connection.release();
+    }
+  }
+
   const columns = await db.query("SHOW COLUMNS FROM orders");
   const availableColumns = new Set(columns.map((column) => column.Field));
   const assignments = ["status = ?"];

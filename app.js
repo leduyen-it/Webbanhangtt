@@ -26,6 +26,7 @@ var productRouter = require("./routes/product");
 var cartRouter = require("./routes/cart");
 var wishlistRouter = require("./routes/wishlist");
 var ordersRouter = require("./routes/orders");
+var notificationsRouter = require("./routes/notifications");
 var adminRouter = require("./routes/admin");
 var vnpayRouter = require("./routes/vnpay");
 var chatRouter = require("./routes/chat");
@@ -140,6 +141,13 @@ app.use(function (req, res, next) {
     return render.call(this, view, options, function (error, html) {
       if (error) return next(error);
 
+      if (!/\/js\/header-tools\.js/.test(html)) {
+        html = html.replace(
+          /<\/body\s*>/i,
+          '<script src="/js/header-tools.js" defer></script></body>'
+        );
+      }
+
       ejs.renderFile(
         path.join(__dirname, "views", "site", "chatbox.ejs"),
         {},
@@ -166,6 +174,7 @@ app.use("/san-pham", productRouter);
 app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
 app.use("/orders", ordersRouter);
+app.use("/api/notifications", notificationsRouter);
 app.use("/vnpay", vnpayRouter);
 
 // catch 404 and forward to error handler
