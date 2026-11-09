@@ -1,120 +1,421 @@
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-  <!-- Content Header (Page header) -->
+<style>
+  .admin-product-add .content-header {
+    padding-bottom: 0.5rem;
+  }
+
+  .admin-product-add .page-intro {
+    margin: 0.35rem 0 0;
+    color: #6c757d;
+  }
+
+  .admin-product-add .product-form-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 0.65rem;
+    box-shadow: 0 0.35rem 1.25rem rgba(28, 39, 60, 0.08);
+  }
+
+  .admin-product-add .product-form-card > .card-header {
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border-bottom: 1px solid #edf0f4;
+  }
+
+  .admin-product-add .card-title {
+    color: #26364a;
+    font-weight: 600;
+  }
+
+  .admin-product-add .card-body {
+    padding: 1.35rem;
+  }
+
+  .admin-product-add .form-group {
+    margin-bottom: 1.15rem;
+  }
+
+  .admin-product-add label {
+    color: #34445a;
+    font-weight: 600;
+  }
+
+  .admin-product-add .form-control {
+    min-height: 42px;
+    border-color: #d8dee8;
+    border-radius: 0.4rem;
+    box-shadow: none;
+  }
+
+  .admin-product-add .form-control:focus {
+    border-color: #5b8def;
+    box-shadow: 0 0 0 0.15rem rgba(59, 130, 246, 0.12);
+  }
+
+  .admin-product-add textarea.form-control {
+    min-height: 112px;
+    resize: vertical;
+  }
+
+  .admin-product-add .image-preview {
+    display: flex;
+    min-height: 230px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.55rem;
+    background: #f7f9fc;
+    color: #8492a6;
+  }
+
+  .admin-product-add .image-preview img {
+    display: block;
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+  }
+
+  .admin-product-add .image-preview-placeholder {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .admin-product-add .image-preview-placeholder i {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #9aa8ba;
+    font-size: 2.5rem;
+  }
+
+  .admin-product-add .custom-file-label {
+    overflow: hidden;
+    border-color: #d8dee8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-product-add .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem 1.35rem;
+    background: #fbfcfe;
+    border-top: 1px solid #edf0f4;
+  }
+
+  .admin-product-add .form-actions .btn {
+    min-width: 132px;
+    border-radius: 0.4rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .admin-product-add .content-header .breadcrumb {
+      float: none !important;
+      margin-top: 0.75rem;
+      padding: 0;
+    }
+
+    .admin-product-add .card-body {
+      padding: 1rem;
+    }
+
+    .admin-product-add .image-preview {
+      min-height: 180px;
+    }
+
+    .admin-product-add .form-actions {
+      padding: 1rem;
+    }
+
+    .admin-product-add .form-actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<div class="content-wrapper admin-product-add">
   <div class="content-header">
     <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
+      <div class="row align-items-start">
+        <div class="col-sm-7">
           <h1 class="m-0">Thêm sản phẩm</h1>
+          <p class="page-intro">Nhập thông tin sản phẩm và hình ảnh hiển thị trên cửa hàng.</p>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-5">
           <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-            <li class="breadcrumb-item">
-              <a href="/admin/products">Sản phẩm</a>
-            </li>
-            <li class="breadcrumb-item active">Thêm sản phẩm</li>
+            <li class="breadcrumb-item"><a href="/admin">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/admin/products">Sản phẩm</a></li>
+            <li class="breadcrumb-item active">Thêm mới</li>
           </ol>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card card-primary">
-            <div class="card-header">
-              <h3 class="card-title">Thông tin sản phẩm</h3>
-            </div>
-            <form
-              method="post"
-              action="/admin/products/add"
-              enctype="multipart/form-data"
-            >
+      <form
+        method="post"
+        action="/admin/products/add"
+        enctype="multipart/form-data"
+        id="adminProductAddForm"
+      >
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card product-form-card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-info-circle mr-2 text-primary"></i>Thông tin sản phẩm</h3>
+              </div>
               <div class="card-body">
                 <div class="form-group">
-                  <label for="nameProduct">Tên sản phẩm</label>
+                  <label for="nameProduct">Tên sản phẩm <span class="text-danger">*</span></label>
                   <input
                     type="text"
                     class="form-control"
                     id="nameProduct"
                     name="nameProduct"
-                    placeholder="Nhập tên sản phẩm"
+                    placeholder="Ví dụ: Mũ bảo hiểm fullface..."
+                    maxlength="50"
                     required
                   />
+                  <small class="form-text text-muted">Tối đa 50 ký tự.</small>
                 </div>
-                <div class="form-group">
-                  <label for="priceProduct">Giá</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="priceProduct"
-                    name="priceProduct"
-                    placeholder="Nhập giá sản phẩm"
-                    required
-                  />
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="priceProduct">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="priceProduct"
+                          name="priceProduct"
+                          min="0"
+                          step="1"
+                          placeholder="Nhập giá bán"
+                          required
+                        />
+                        <div class="input-group-append">
+                          <span class="input-group-text">₫</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="idCat">Danh mục <span class="text-danger">*</span></label>
+                      <select class="form-control" id="idCat" name="idCat" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        <% categories.forEach(function(category) { %>
+                        <option value="<%= category.idCat %>"><%= category.nameCat %></option>
+                        <% }); %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="amountProduct">Số lượng tồn kho <span class="text-danger">*</span></label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="amountProduct"
+                        name="amountProduct"
+                        min="0"
+                        max="999999"
+                        step="1"
+                        value="0"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
+
                 <div class="form-group">
-                  <label for="idCat">Danh mục</label>
-                  <select class="form-control" id="idCat" name="idCat" required>
-                    <option value="">-- Chọn danh mục --</option>
-                    <% categories.forEach(function(category) { %>
-                    <option value="<%= category.idCat %>">
-                      <%= category.nameCat %>
-                    </option>
+                  <label>Kích cỡ có sẵn <span class="text-danger">*</span></label>
+                  <div class="d-flex flex-wrap">
+                    <% ["S", "M", "L"].forEach(function(size) { %>
+                    <div class="custom-control custom-checkbox mr-4">
+                      <input
+                        class="custom-control-input product-size-option"
+                        type="checkbox"
+                        id="size<%= size %>"
+                        name="sizes"
+                        value="<%= size %>"
+                      />
+                      <label class="custom-control-label" for="size<%= size %>"><%= size %></label>
+                    </div>
                     <% }); %>
-                  </select>
+                  </div>
+                  <small class="form-text text-danger" id="sizeError" hidden>Chọn ít nhất một kích cỡ.</small>
                 </div>
+
                 <div class="form-group">
-                  <label for="imgProduct">Hình ảnh sản phẩm</label>
-                  <input
-                    type="file"
-                    class="form-control"
-                    id="imgProduct"
-                    name="imgProduct"
-                    accept="image/*"
-                  />
-                  <small class="form-text text-muted"
-                    >Chọn file hình ảnh (JPG, PNG, GIF). Tối đa 5MB.</small
-                  >
-                </div>
-                <div class="form-group">
-                  <label for="desProduct">Mô tả</label>
+                  <label for="desProduct">Mô tả sản phẩm</label>
                   <textarea
                     class="form-control"
                     rows="4"
                     id="desProduct"
                     name="desProduct"
-                    placeholder="Nhập mô tả sản phẩm"
+                    placeholder="Mô tả ngắn về đặc điểm và công dụng sản phẩm..."
                   ></textarea>
                 </div>
-                <div class="form-group">
+
+                <div class="form-group mb-0">
                   <label for="specification">Chi tiết sản phẩm</label>
                   <textarea
                     class="form-control"
-                    rows="6"
+                    rows="5"
                     id="specification"
                     name="specification"
-                    placeholder="Nhập chi tiết sản phẩm (mỗi dòng một thông tin)&#10;Ví dụ:&#10;Chất liệu: Nhựa ABS cao cấp&#10;Trọng lượng: 1.2kg&#10;Kích thước: S, M, L&#10;Chuẩn an toàn: DOT, ECE&#10;Bảo hành: 12 tháng"
+                    placeholder="Mỗi dòng một thông tin, ví dụ:&#10;Chất liệu: Nhựa ABS&#10;Trọng lượng: 1.2kg&#10;Chuẩn an toàn: DOT, ECE&#10;Bảo hành: 12 tháng"
                   ></textarea>
-                  <small class="form-text text-muted"
-                    >Mỗi dòng sẽ hiển thị như một mục trong danh sách chi tiết.</small
-                  >
+                  <small class="form-text text-muted">Mỗi dòng sẽ được hiển thị thành một mục chi tiết.</small>
                 </div>
               </div>
-              <div class="card-footer">
-                <button type="submit" class="btn btn-primary">
-                  Thêm sản phẩm
-                </button>
-                <a href="/admin/products" class="btn btn-default">Hủy</a>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card product-form-card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="far fa-image mr-2 text-primary"></i>Hình ảnh sản phẩm</h3>
               </div>
-            </form>
+              <div class="card-body">
+                <div class="image-preview mb-3" id="productImagePreview" aria-live="polite">
+                  <div class="image-preview-placeholder" id="productImagePlaceholder">
+                    <i class="far fa-image"></i>
+                    <span>Ảnh xem trước sẽ hiển thị tại đây</span>
+                  </div>
+                  <img id="productImagePreviewImg" alt="Ảnh xem trước sản phẩm" hidden />
+                </div>
+                <div class="form-group mb-2">
+                  <label for="imgProduct">Chọn ảnh</label>
+                  <div class="custom-file">
+                    <input
+                      type="file"
+                      class="custom-file-input"
+                      id="imgProduct"
+                      name="imgProduct"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      aria-describedby="imageHelp imageError"
+                    />
+                    <label class="custom-file-label" for="imgProduct">Chọn tệp ảnh</label>
+                  </div>
+                  <small class="form-text text-muted" id="imageHelp">JPG, PNG, GIF hoặc WEBP. Kích thước tối đa 5MB.</small>
+                  <small class="form-text text-danger" id="imageError" role="alert" hidden></small>
+                </div>
+              </div>
+            </div>
+
+            <div class="callout callout-info">
+              <h5><i class="fas fa-lightbulb mr-1"></i> Lưu ý</h5>
+              <p class="mb-0">Kiểm tra tên, giá và danh mục trước khi lưu. Sản phẩm sẽ được thêm vào danh sách quản lý.</p>
+            </div>
           </div>
         </div>
-      </div>
+
+        <div class="card product-form-card">
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus mr-1"></i> Thêm sản phẩm
+            </button>
+            <a href="/admin/products" class="btn btn-default">
+              <i class="fas fa-times mr-1"></i> Hủy
+            </a>
+          </div>
+        </div>
+      </form>
     </div>
   </section>
 </div>
+
+<script>
+  (function () {
+    var form = document.getElementById("adminProductAddForm");
+    var sizeOptions = document.querySelectorAll(".product-size-option");
+    var sizeError = document.getElementById("sizeError");
+    var fileInput = document.getElementById("imgProduct");
+    var preview = document.getElementById("productImagePreviewImg");
+    var placeholder = document.getElementById("productImagePlaceholder");
+    var fileLabel = document.querySelector('label[for="imgProduct"]');
+    var errorMessage = document.getElementById("imageError");
+    var previewUrl = null;
+
+    if (!form || !fileInput || !preview || !placeholder || !fileLabel || !errorMessage) return;
+
+    form.addEventListener("submit", function (event) {
+      var hasSize = Array.prototype.some.call(sizeOptions, function (option) {
+        return option.checked;
+      });
+      sizeError.hidden = hasSize;
+      if (!hasSize) {
+        event.preventDefault();
+        sizeOptions[0].focus();
+      }
+    });
+
+    Array.prototype.forEach.call(sizeOptions, function (option) {
+      option.addEventListener("change", function () {
+        if (option.checked) sizeError.hidden = true;
+      });
+    });
+
+    fileInput.addEventListener("change", function () {
+      var file = fileInput.files && fileInput.files[0];
+      errorMessage.hidden = true;
+      errorMessage.textContent = "";
+      fileLabel.textContent = file ? file.name : "Chọn tệp ảnh";
+      fileInput.setCustomValidity("");
+
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+      }
+
+      if (!file) {
+        preview.hidden = true;
+        preview.removeAttribute("src");
+        placeholder.hidden = false;
+        return;
+      }
+
+      if (!/^image\/(?:jpeg|png|gif|webp)$/.test(file.type)) {
+        fileInput.value = "";
+        fileLabel.textContent = "Chọn tệp ảnh";
+        errorMessage.textContent = "Vui lòng chọn ảnh JPG, PNG, GIF hoặc WEBP.";
+        errorMessage.hidden = false;
+        preview.hidden = true;
+        placeholder.hidden = false;
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        fileInput.value = "";
+        fileLabel.textContent = "Chọn tệp ảnh";
+        errorMessage.textContent = "Ảnh vượt quá giới hạn 5MB. Vui lòng chọn ảnh nhỏ hơn.";
+        errorMessage.hidden = false;
+        preview.hidden = true;
+        placeholder.hidden = false;
+        return;
+      }
+
+      previewUrl = URL.createObjectURL(file);
+      preview.onload = function () {
+        placeholder.hidden = true;
+        preview.hidden = false;
+      };
+      preview.onerror = function () {
+        preview.hidden = true;
+        placeholder.hidden = false;
+        errorMessage.textContent = "Không thể xem trước ảnh đã chọn.";
+        errorMessage.hidden = false;
+      };
+      preview.src = previewUrl;
+    });
+
+    window.addEventListener("beforeunload", function () {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    });
+  })();
+</script>

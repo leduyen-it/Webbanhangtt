@@ -388,14 +388,16 @@ test("chat endpoint, MySQL grounding, history, errors, and widget behavior", asy
 
   await t.test("Markdown output is safe and keeps semantic formatting", async () => {
     generationBehavior = async () => ({
-      text: "## Mẫu phù hợp\n\n\n\n**Fullface** [mở](javascript:alert(1))",
+      text: "### Mẫu phù hợp\n\n***Fullface*** và *êm ái* [mở](javascript:alert(1))",
     });
     const response = await postChat([
       { role: "user", content: "Tư vấn mũ fullface" },
     ]);
     assert.equal(response.status, 200);
-    assert.match(response.body.replyHtml, /<h2>Mẫu phù hợp/i);
-    assert.match(response.body.replyHtml, /<strong>Fullface<\/strong>/);
+    assert.match(response.body.replyHtml, /<h3>Mẫu phù hợp/i);
+    assert.match(response.body.replyHtml, /<em><strong>Fullface<\/strong><\/em>/);
+    assert.match(response.body.replyHtml, /<em>êm ái<\/em>/);
+    assert.doesNotMatch(response.body.replyHtml, /\*{1,3}|#{1,6}/);
     assert.doesNotMatch(response.body.replyHtml, /href=["']javascript:|<script|javascript:/i);
     assert.doesNotMatch(response.body.replyHtml, /<br\s*\/?>/i);
     generationBehavior = async () => ({ text: "Phản hồi kiểm thử." });
@@ -645,6 +647,10 @@ test("chat endpoint, MySQL grounding, history, errors, and widget behavior", asy
     assert.match(frontend, /response\.json\(\)/);
     assert.match(frontend, /appendSafeHtml/);
     assert.match(frontend, /appendProductCards/);
+    assert.match(frontend, /Thương hiệu: /);
+    assert.match(frontend, /Tồn kho: /);
+    assert.match(frontend, /Kích cỡ: /);
+    assert.match(frontend, /renderFallbackMarkdown/);
     assert.match(frontend, /contextProductIds: lastProductIds/);
     assert.match(frontend, /fetch\("\/cart\/add"/);
     assert.match(frontend, /result\.replyHtml/);

@@ -101,7 +101,14 @@ app.use(async function (req, res, next) {
         req.session.User.id
       );
     } else {
-      res.locals.cartCount = 0;
+      const guestCart = req.session.cart;
+      res.locals.cartCount =
+        guestCart && typeof guestCart === "object" && !Array.isArray(guestCart)
+          ? Object.values(guestCart).reduce(
+              (count, item) => count + (Number(item.quantity) || 0),
+              0
+            )
+          : 0;
       res.locals.wishlistCount = 0;
     }
   } catch (error) {

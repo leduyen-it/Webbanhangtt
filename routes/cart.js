@@ -34,6 +34,40 @@ async function validateAvailableItem(idUser, idProduct, quantity, size) {
   return null;
 }
 
+async function validateGuestAvailableItem(
+  sessionCart,
+  idProduct,
+  quantity,
+  size
+) {
+  const product = await modelProduct.detail(idProduct);
+  if (!product || Number(product.showHide) !== 1) {
+    return { status: 404, message: "Sản phẩm hiện không còn được bán." };
+  }
+  if (
+    !["S", "M", "L"].includes(size) ||
+    Number(product[size]) !== 1 ||
+    Number(product.amountProduct) <= 0
+  ) {
+    return { status: 409, message: "Kích cỡ này hiện không có sẵn." };
+  }
+
+  const existingItem = sessionCart[`${idProduct}_${size}`];
+  const alreadyInCart =
+    existingItem &&
+    Number(existingItem.idProduct) === idProduct &&
+    existingItem.size === size
+      ? Number(existingItem.quantity) || 0
+      : 0;
+  if (alreadyInCart + quantity > Number(product.amountProduct)) {
+    return {
+      status: 409,
+      message: "Số lượng trong kho không đủ cho yêu cầu này.",
+    };
+  }
+  return null;
+}
+
 // GET /cart - Display cart page
 router.get("/", async function (req, res, next) {
   try {
@@ -117,15 +151,52 @@ router.post("/add", async function (req, res, next) {
         cartCount: cartCount,
       });
     } else {
-      // Require login to add to cart
-      return res.status(401).json({
-        success: false,
-        message: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.",
+      const sessionCart =
+        req.session.cart &&
+        typeof req.session.cart === "object" &&
+        !Array.isArray(req.session.cart)
+          ? req.session.cart
+          : {};
+      const availability = await validateGuestAvailableItem(
+        sessionCart,
+        idProduct,
+        quantity,
+        size
+      );
+      if (availability) {
+        return res.status(availability.status).json({
+          success: false,
+          message: availability.message,
+        });
+      }
+
+      const cartKey = `${idProduct}_${size}`;
+      const alreadyInCart = Boolean(sessionCart[cartKey]);
+      req.session.cart = modelCart.addToCartGuest(
+        sessionCart,
+        idProduct,
+        quantity,
+        size
+      );
+      const cartCount = Object.values(req.session.cart).reduce(
+        (count, item) => count + (Number(item.quantity) || 0),
+        0
+      );
+
+      return res.json({
+        success: true,
+        message: alreadyInCart
+          ? "Đã cập nhật giỏ hàng"
+          : "Đã thêm sản phẩm vào giỏ hàng",
+        cartCount,
       });
     }
   } catch (error) {
     console.error("Add to cart error:", error);
-    res.json({ success: false, message: "Lỗi khi thêm vào giỏ hàng" });
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi thêm vào giỏ hàng",
+    });
   }
 });
 

@@ -191,6 +191,7 @@ CREATE TABLE `product` (
   `priceProduct` double DEFAULT NULL,
   `dateUpdate` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `desProduct` varchar(4000) DEFAULT NULL,
+  `specification` text DEFAULT NULL,
   `idCat` int(11) DEFAULT NULL,
   `showHide` tinyint(1) DEFAULT NULL,
   `views` int(11) DEFAULT 0

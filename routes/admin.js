@@ -496,7 +496,7 @@ router.get("/products", function (req, res, next) {
   let sql =
     "SELECT p.*, c.nameCat FROM product p LEFT JOIN catalog c ON p.idCat = c.idCat";
   db.query(sql, (err, products) => {
-    if (err) throw err;
+    if (err) return next(err);
     renderWithLayout(res, "admin/products", {
       products: products,
       user: req.session.User,
@@ -507,7 +507,7 @@ router.get("/products", function (req, res, next) {
 // Thêm sản phẩm mới
 router.get("/products/add", function (req, res, next) {
   db.query("SELECT * FROM catalog", (err, categories) => {
-    if (err) throw err;
+    if (err) return next(err);
     renderWithLayout(res, "admin/product-add", {
       categories: categories,
       user: req.session.User,
@@ -519,16 +519,62 @@ router.post(
   "/products/add",
   upload.single("imgProduct"),
   function (req, res, next) {
-    let { nameProduct, priceProduct, desProduct, specification, idCat } = req.body;
-    let imgProduct = req.file ? `img/${req.file.filename}` : null;
+    const nameProduct =
+      typeof req.body.nameProduct === "string" ? req.body.nameProduct.trim() : "";
+    const priceProduct = Number(req.body.priceProduct);
+    const idCat = Number(req.body.idCat);
+    const amountProduct = Number(req.body.amountProduct);
+    const submittedSizes = Array.isArray(req.body.sizes)
+      ? req.body.sizes
+      : [req.body.sizes].filter(Boolean);
+    const availableSizes = new Set(
+      submittedSizes.filter((size) => ["S", "M", "L"].includes(size))
+    );
+    const specification =
+      typeof req.body.specification === "string"
+        ? req.body.specification.trim()
+        : "";
+    const desProduct =
+      typeof req.body.desProduct === "string" ? req.body.desProduct.trim() : "";
+
+    if (!nameProduct || nameProduct.length > 50) {
+      return res.status(400).send("Tên sản phẩm phải có từ 1 đến 50 ký tự.");
+    }
+    if (!Number.isFinite(priceProduct) || priceProduct < 0) {
+      return res.status(400).send("Giá sản phẩm không hợp lệ.");
+    }
+    if (!Number.isSafeInteger(idCat) || idCat <= 0) {
+      return res.status(400).send("Vui lòng chọn danh mục hợp lệ.");
+    }
+    if (
+      !Number.isSafeInteger(amountProduct) ||
+      amountProduct < 0 ||
+      amountProduct > 999999
+    ) {
+      return res.status(400).send("Số lượng tồn kho không hợp lệ.");
+    }
+    if (!availableSizes.size) {
+      return res.status(400).send("Vui lòng chọn ít nhất một kích cỡ.");
+    }
 
     let sql =
-      "INSERT INTO product (nameProduct, priceProduct, desProduct, specification, idCat, imgProduct) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO product (nameProduct, amountProduct, S, M, L, priceProduct, desProduct, specification, idCat, imgProduct, showHide) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
     db.query(
       sql,
-      [nameProduct, priceProduct, desProduct, specification, idCat, imgProduct],
+      [
+        nameProduct,
+        amountProduct,
+        availableSizes.has("S") ? 1 : 0,
+        availableSizes.has("M") ? 1 : 0,
+        availableSizes.has("L") ? 1 : 0,
+        priceProduct,
+        desProduct || null,
+        specification || null,
+        idCat,
+        req.file ? `img/${req.file.filename}` : null,
+      ],
       (err, result) => {
-        if (err) throw err;
+        if (err) return next(err);
         res.redirect("/admin/products?success=add");
       }
     );

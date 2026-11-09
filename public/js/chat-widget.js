@@ -8,7 +8,7 @@
 
   var style = document.createElement("link");
   style.rel = "stylesheet";
-  style.href = "/css/chat-widget.css?v=3";
+  style.href = "/css/chat-widget.css?v=4";
   document.head.appendChild(style);
 
   var launcher = document.createElement("button");
@@ -128,6 +128,65 @@
     copyNodes(parsed.body, container);
   }
 
+  function renderFallbackMarkdown(container, text) {
+    var lines = String(text || "").replace(/\r\n?/g, "\n").split("\n");
+    var list = null;
+    var inline = function (value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/__(.+?)__/g, "<strong>$1</strong>")
+        .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>")
+        .replace(/(^|[^_])_([^_\n]+)_(?!_)/g, "$1<em>$2</em>")
+        .replace(/(?:\*{1,3}|_{1,2}|#{1,6})/g, "");
+    };
+    var closeList = function () {
+      if (!list) return;
+      container.appendChild(document.createElement("br"));
+      list = null;
+    };
+
+    lines.forEach(function (line) {
+      var heading = line.match(/^\s{0,3}(#{1,6})\s+(.+?)\s*#*\s*$/);
+      var item = line.match(/^\s*[-*+]\s+(.+)$/);
+      var numberedItem = line.match(/^\s*\d+[.)]\s+(.+)$/);
+      if (!line.trim()) {
+        closeList();
+        return;
+      }
+      if (heading) {
+        closeList();
+        var headingElement = document.createElement("strong");
+        headingElement.innerHTML = inline(heading[2]);
+        container.appendChild(headingElement);
+        container.appendChild(document.createElement("br"));
+        return;
+      }
+      if (item || numberedItem) {
+        var listType = numberedItem ? "ol" : "ul";
+        if (!list || list.tagName.toLowerCase() !== listType) {
+          closeList();
+          list = document.createElement(listType);
+          container.appendChild(list);
+        }
+        var listItem = document.createElement("li");
+        listItem.innerHTML = inline((item || numberedItem)[1]);
+        list.appendChild(listItem);
+        return;
+      }
+
+      closeList();
+      var paragraph = document.createElement("span");
+      paragraph.innerHTML = inline(line);
+      container.appendChild(paragraph);
+      container.appendChild(document.createElement("br"));
+    });
+  }
+
   function appendProductCards(container, products) {
     if (!Array.isArray(products) || !products.length) return;
     var list = document.createElement("div");
@@ -153,12 +212,6 @@
       name.className = "hs-chat-product-name";
       name.textContent = String(product.name || "Sản phẩm");
       details.appendChild(name);
-      if (product.category) {
-        var category = document.createElement("p");
-        category.className = "hs-chat-product-category";
-        category.textContent = String(product.category);
-        details.appendChild(category);
-      }
       var price = document.createElement("strong");
       price.className = "hs-chat-product-price";
       price.textContent = Number.isFinite(Number(product.price))
@@ -166,21 +219,29 @@
         : "Liên hệ cửa hàng";
       details.appendChild(price);
 
+      var category = document.createElement("p");
+      category.className = "hs-chat-product-category";
+      category.textContent = "Thương hiệu: " +
+        (product.category ? String(product.category) : "Chưa có thông tin");
+      details.appendChild(category);
+
       var stock = document.createElement("span");
       stock.className = "hs-chat-product-stock";
       stock.textContent =
         product.stock === null
-          ? "Chưa có thông tin tồn kho"
+          ? "Tồn kho: Chưa có thông tin"
           : Number(product.stock) > 0
-            ? "Còn hàng"
-            : "Hết hàng";
+            ? "Tồn kho: " + Number(product.stock) + " sản phẩm"
+            : "Tồn kho: Hết hàng";
       details.appendChild(stock);
-      if (product.sizes && product.sizes.length) {
-        var sizes = document.createElement("span");
-        sizes.className = "hs-chat-product-sizes";
-        sizes.textContent = "Size: " + product.sizes.join(", ");
-        details.appendChild(sizes);
-      }
+      var sizes = document.createElement("span");
+      sizes.className = "hs-chat-product-sizes";
+      sizes.textContent =
+        "Kích cỡ: " +
+        (Array.isArray(product.sizes) && product.sizes.length
+          ? product.sizes.join(", ")
+          : "Chưa có thông tin");
+      details.appendChild(sizes);
       if (product.description) {
         var description = document.createElement("p");
         description.className = "hs-chat-product-description";
@@ -281,6 +342,8 @@
       (isError ? " hs-chat-message--error" : "");
     if (role === "assistant" && replyHtml) {
       appendSafeHtml(bubble, replyHtml);
+    } else if (role === "assistant") {
+      renderFallbackMarkdown(bubble, content);
     } else {
       bubble.textContent = content;
     }

@@ -14,6 +14,7 @@ let product = {
 };
 let cartItems = [];
 const addedItems = [];
+let guestSession = { cart: {} };
 
 Module._load = function (request, parent, isMain) {
   if (parent && /routes[\\/]cart\.js$/.test(parent.filename)) {
@@ -22,6 +23,15 @@ Module._load = function (request, parent, isMain) {
         addToCart: async (...args) => {
           addedItems.push(args);
           return { message: "Added" };
+        },
+        addToCartGuest: (sessionCart, idProduct, quantity, size) => {
+          const key = `${idProduct}_${size}`;
+          if (sessionCart[key]) {
+            sessionCart[key].quantity += quantity;
+          } else {
+            sessionCart[key] = { idProduct, quantity, size };
+          }
+          return sessionCart;
         },
         getCartItems: async () => cartItems,
         getCartCount: async () => 1,
@@ -39,14 +49,16 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 app.use((req, res, next) => {
-  req.session = { User: { id: 11 } };
+  req.session = req.headers["x-guest"]
+    ? guestSession
+    : { User: { id: 11 } };
   next();
 });
 app.use("/cart", require("../routes/cart"));
 
 let server;
 
-function postCart(payload) {
+function postCart(payload, guest = false) {
   const body = JSON.stringify(payload);
   return new Promise((resolve, reject) => {
     const request = http.request(
@@ -58,6 +70,7 @@ function postCart(payload) {
         headers: {
           "Content-Type": "application/json",
           "Content-Length": Buffer.byteLength(body),
+          ...(guest ? { "X-Guest": "true" } : {}),
         },
       },
       (response) => {
@@ -123,5 +136,41 @@ test("cart add validates active stock and size before changing the cart", async 
       });
       assert.equal(response.status, 400);
     }
+  });
+
+  await t.test("allows guest additions in the session cart and enforces stock", async () => {
+    guestSession = { cart: {} };
+    let response = await postCart(
+      { idProduct: 7, quantity: 1, size: "M" },
+      true
+    );
+    assert.equal(response.status, 200);
+    assert.equal(response.body.success, true);
+    assert.equal(response.body.cartCount, 1);
+    assert.deepEqual(guestSession.cart["7_M"], {
+      idProduct: 7,
+      quantity: 1,
+      size: "M",
+    });
+
+    response = await postCart(
+      { idProduct: 7, quantity: 1, size: "M" },
+      true
+    );
+    assert.equal(response.status, 200);
+    assert.equal(response.body.cartCount, 2);
+
+    response = await postCart(
+      { idProduct: 7, quantity: 1, size: "M" },
+      true
+    );
+    assert.equal(response.status, 409);
+    assert.equal(response.body.success, false);
+
+    response = await postCart(
+      { idProduct: 7, quantity: 1, size: "S" },
+      true
+    );
+    assert.equal(response.status, 409);
   });
 });

@@ -400,7 +400,13 @@
 
 .hs-chat-message--assistant ul,
 .hs-chat-message--assistant ol {
+  margin-left: 2px;
   padding-left: 18px;
+}
+
+.hs-chat-message--assistant ul + br,
+.hs-chat-message--assistant ol + br {
+  display: none;
 }
 
 .hs-chat-message--assistant li {
@@ -481,6 +487,11 @@
   line-height: 1.4;
 }
 
+.hs-chat-product-category {
+  color: #344967;
+  font-weight: 600;
+}
+
 .hs-chat-product-description {
   display: -webkit-box;
   overflow: hidden;
@@ -495,8 +506,15 @@
 
 .hs-chat-product-stock,
 .hs-chat-product-sizes {
+  display: block;
   color: #5b708c;
   font-size: 10px;
+  line-height: 1.4;
+}
+
+.hs-chat-product-stock {
+  color: #177245;
+  font-weight: 600;
 }
 
 .hs-chat-product-actions {

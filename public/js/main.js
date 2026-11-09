@@ -453,28 +453,20 @@ function addToCart(productId, quantity, size) {
       // only send size if chosen
       ...(size ? { size: size } : {}),
     },
-    statusCode: {
-      401: function () {
-      //showNotification(
-       //   "⚠️ Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng. Đang chuyển hướng...",
-       //   "error"
-       // );
-        // Chờ 3 giây rồi mới chuyển trang để người dùng nhìn rõ thông báo
-        setTimeout(function () {
-          window.location.href = "/users/dang-nhap";
-        }, 3000);
-      },
-    },
     success: function (response) {
       if (response.success) {
         showNotification(response.message, "success");
-        updateCartCounter();
+        updateCartBadge(response.cartCount);
       } else {
         showNotification(response.message, "error");
       }
     },
-    error: function () {
-      showNotification("Lỗi khi thêm vào giỏ hàng", "error");
+    error: function (xhr) {
+      var message =
+        xhr.responseJSON && xhr.responseJSON.message
+          ? xhr.responseJSON.message
+          : "Lỗi khi thêm vào giỏ hàng";
+      showNotification(message, "error");
     },
   });
 }
